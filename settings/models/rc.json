@@ -1,9 +1,0 @@
-{
-    "name": "rc",
-    "class": "rc",
-    "param": {
-        "resistance": 1,
-        "capacitance": 0.1,
-        "charge": 0.0
-    }
-}

@@ -1,15 +1,18 @@
 import matplotlib.pyplot as plt
-from models.signal_generator import signal_generator
-from models.rc import rc
+from simulator.simulator import Simulator
+from simulator.settings import simulator_settings
+from simulator.models.signal_generator import SignalGenerator
+from simulator.models.rc import RC
 
 def run(duration, dt):
+    s = Simulator(simulator_settings["path_to_models"], dt)
     running = True
     # initial values
     volt = [10]
     charge = [0]
     t = [0]
     cycles = int(duration/dt)
-    sig = signal_generator(
+    sig = SignalGenerator(
         [
             {
                 "start": {
@@ -36,7 +39,7 @@ def run(duration, dt):
             }
         ]
     )
-    circuit = rc(dt, 10, 1, charge[0])
+    circuit = RC(dt, 10, 1, charge[0])
 
     # set pyplot to be interactive
     plt.ion()
