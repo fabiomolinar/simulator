@@ -1,0 +1,25 @@
+{
+    "name": "sig",
+    "class": "SignalGenerator",
+    "params": {
+        "events": [
+            {
+                "start": {
+                    "value": 10
+                }
+            },
+            {
+                "step": {
+                    "cycle": 10000,
+                    "value": 0
+                }
+            },
+            {
+                "ramp_up": {
+                    "cycle": 20000,
+                    "value": 0.001
+                }
+            }
+        ]
+    }
+}
