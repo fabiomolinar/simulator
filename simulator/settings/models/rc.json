@@ -1,9 +1,16 @@
 {
     "name": "rc",
     "class": "RC",
+    "order": 1,
     "params": {
         "resistance": 1,
         "capacitance": 0.1,
         "charge": 0.0
+    },
+    "inputs": {
+        "Vin": {
+            "model": "sig",
+            "variable": "current_value"
+        }
     }
 }

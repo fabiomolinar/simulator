@@ -8,9 +8,15 @@ from .models.electric_motor import ElectricMotor
 from .models.rc import RC
 
 class Simulator:
-    def __init__(self, path_to_models, dt):
+    def __init__(self, path_to_models, dt, duration):
         self.models = {}
+        self.execution_list = []
+        self.t = [0]
         self.dt = dt
+        self.duration = duration
+        self.cycles = int(duration/dt)
+        self.i = 0  # current cycle
+        self.running = True
         self.path_to_models = path_to_models
         
         self.load_models(path_to_models)
@@ -36,4 +42,47 @@ class Simulator:
             warnings.warn("Couldn't instantiate a class named {}".format(spec["class"]))
             return
         self.models[spec["name"]] = model
-        
+        self.update_execution_list(spec)
+
+    def update_execution_list(self, spec):
+        if len(self.execution_list) == 0:
+            self.execution_list.append(spec)
+            return
+        else:
+            for idx, i in enumerate(self.execution_list):
+                if spec["order"] <= i["order"]:
+                    self.execution_list.insert(idx, spec)
+                    return
+            self.execution_list.append(spec)
+            
+    def stop_running(self):
+        self.running = False
+    
+    def run(self):
+        for i in range(self.cycles):
+            if not self.running:
+                break
+            self.i = i
+            # run models
+            for model_definition in self.execution_list:
+                model_inputs = self.get_model_inputs(model_definition)
+                self.models[model_definition["name"]].calculate(**model_inputs)
+            # update time
+            self.t.append(self.t[-1] + self.dt)
+
+    @staticmethod
+    def get_single_value(value):
+        if type(value) == list:
+            return value[-1]
+        return value
+    
+    def get_model_inputs(self, model_definition):
+        inputs = model_definition["inputs"]
+        inputs_values = {}
+        for i in inputs:
+            if not "model" in inputs[i]:
+                # variable is to be taken from simulator module
+                inputs_values[i] = self.get_single_value(getattr(self, inputs[i]["variable"]))
+            else:
+                inputs_values[i] = self.get_single_value(getattr(self.models[inputs[i]["model"]], inputs[i]["variable"]))
+        return inputs_values

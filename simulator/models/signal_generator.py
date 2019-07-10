@@ -37,13 +37,13 @@ class SignalGenerator:
     """
     def __init__(self, events, **kwargs):
         self.events = events
-        self.current_value = 0
+        self.current_value = [0]
         self.cycles_with_events = self.get_cycles_with_events()
         self.current_event = None
 
         for el in events:
             if "start" in el:
-                self.current_value = el["start"]["value"]
+                self.current_value[0] = el["start"]["value"]
 
     def get_cycles_with_events(self):
         """ Return a list with which cycles an event change will occur. """
@@ -57,7 +57,7 @@ class SignalGenerator:
     def calculate(self, cycle):
         # at first cycle just return the initial value
         if cycle == 0:
-            return self.current_value
+            return self.current_value[0]
         # update current event
         if self.cycles_with_events:
             if cycle in self.cycles_with_events:
@@ -68,7 +68,7 @@ class SignalGenerator:
             updater = getattr(self, key, None)
             if callable(updater):
                 updater()
-        return self.current_value
+        return self.current_value[-1]
 
     def get_event_by_cycle(self, cycle):
         for el in self.events:
@@ -80,15 +80,15 @@ class SignalGenerator:
     # event functions
     def step(self):
         value = self.current_event["step"]["value"]
-        self.current_value = value
+        self.current_value.append(value)
 
     def ramp_up(self):
         value = self.current_event["ramp_up"]["value"]
-        self.current_value = self.current_value + value
+        self.current_value.append(self.current_value[-1] + value)
 
     def ramp_down(self):
         value = self.current_event["ramp_down"]["value"]
-        self.current_value = self.current_value - value
+        self.current_value.append(self.current_value[-1] - value)
 
     def pause(self):
         # no need to update the current value

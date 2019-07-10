@@ -1,6 +1,7 @@
 {
     "name": "sig",
     "class": "SignalGenerator",
+    "order": 0,
     "params": {
         "events": [
             {
@@ -21,5 +22,10 @@
                 }
             }
         ]
+    },
+    "inputs": {
+        "cycle": {
+            "variable": "i"
+        }
     }
 }
