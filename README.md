@@ -4,6 +4,10 @@ A small experiment into trying to create my own Python based simulation tool.
 
 This project also serves as a reference to create other Python projects.
 
+Below the results from runing a RC (resistor-capacitor) circuit.
+
+![RC simulation result](https://i.ibb.co/ZxfYqf8/rc-simulation-run.png)
+
 ## Running the simulation
 
 To run the model, it sufices to run the `run_sim.py` python script which is located at the project folder. In other words, from the project directory, run this command: `python run_sim.py`.

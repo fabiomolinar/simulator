@@ -19,7 +19,11 @@ class Plot:
         # set listeners
         self.fig.canvas.mpl_connect("close_event", self.sim.stop_running)
         # load plots
-        self.plots.update(self.load_plots(path_to_models))        
+        self.plots.update(self.load_plots(path_to_models))
+        # plot settings
+        plt.title("My small simulator")
+        plt.xlabel("time [s]")
+        self.ax.legend()
 
     def load_plots(self, path):
         """ Loads a plot for each file on path """
@@ -43,7 +47,8 @@ class Plot:
                 model = self.sim.models[spec["name"]]
                 # creating key to avoid moels with the same variable name to overide each other
                 key = spec["name"] + "_" + i
-                plot, = self.ax.plot(self.sim.t, getattr(model, i))
+                label = spec["plot"][i]["legend"] if "legend" in spec["plot"][i] else i
+                plot, = self.ax.plot(self.sim.t, getattr(model, i), label=label)
                 plots.update({
                     key: {
                         "plot": plot,

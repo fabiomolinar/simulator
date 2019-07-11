@@ -3,9 +3,9 @@
     "class": "RC",
     "order": 1,
     "params": {
-        "resistance": 1,
+        "resistance": 100,
         "capacitance": 0.1,
-        "charge": 1.0
+        "charge": 0.0
     },
     "inputs": {
         "Vin": {
