@@ -1,5 +1,5 @@
 class RC:
-    """A class used to model an RC (resistor-capacitor) circuit"""
+    """ A class used to model an RC (resistor-capacitor) circuit """
     def __init__(self, dt, resistance, capacitance, charge):
         # constants
         self.dt = dt
@@ -16,6 +16,7 @@ class RC:
         self.i = [None]        
 
     def calculate(self, Vin):
+        """ Calculates the next value and adds it to the memory """
         self.Vc.append(self.Q[-1]/self.C[-1])
         self.Vr.append(Vin - self.Vc[-1])
         self.i.append(self.Vr[-1]/self.R[-1])

@@ -5,7 +5,7 @@
     "params": {
         "resistance": 1,
         "capacitance": 0.1,
-        "charge": 0.0
+        "charge": 1.0
     },
     "inputs": {
         "Vin": {
