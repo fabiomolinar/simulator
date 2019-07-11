@@ -26,6 +26,8 @@ To make modules visible to each other, they should all be contained within one s
                 module4
         [other files]
 
+Other files could be scripts, README.md, LICENSE, .gitignore, etc.
+
 ### VScode
 
 #### Debugging
@@ -38,3 +40,9 @@ Since this project is configured to be a package, a script (`run_sim.py`) was cr
         "request": "launch",
         "program": "${workspaceFolder}/run_sim.py"
     }
+
+#### Unit tests
+
+Since the tests are not inside the same package as the project package, on the test modules it's necessary to import the project modules using absolute paths. For example, instead of doing **from ...models import rc**, it's necessary to do **from simulator.models import rc**.
+
+To run the tests, it sufices to run the following command from the project's directory (if not actually using VScode's extensions): `python -m unittest discover -v` (for the verbose option).

@@ -1,5 +1,5 @@
 import unittest
-from ...models.rc import RC
+from simulator.models.rc import RC
 
 class TestRC(unittest.TestCase):
     def setUp(self):
