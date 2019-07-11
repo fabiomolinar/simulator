@@ -6,6 +6,7 @@ import warnings
 from .models.signal_generator import SignalGenerator
 from .models.electric_motor import ElectricMotor
 from .models.rc import RC
+from .settings import simulator_settings
 
 class Simulator:
     def __init__(self, path_to_models, dt, duration):
@@ -58,7 +59,7 @@ class Simulator:
     def stop_running(self):
         self.running = False
     
-    def run(self):
+    def run(self, plot = None):
         for i in range(self.cycles):
             if not self.running:
                 break
@@ -69,20 +70,36 @@ class Simulator:
                 self.models[model_definition["name"]].calculate(**model_inputs)
             # update time
             self.t.append(self.t[-1] + self.dt)
+            # ploting
+            if plot and simulator_settings["show_plot"]:
+                cycles_to_update = simulator_settings["plot_update_frequency"]/self.dt
+                if cycles_to_update > 0.0:
+                    cycles_to_update = int(cycles_to_update)
+                    if i % (cycles_to_update) == 0.0:
+                        plot.plot()
+                else:
+                    plot.plot()
+        if plot and simulator_settings["show_plot"]:
+            plot.end()
 
-    @staticmethod
-    def get_single_value(value):
-        if type(value) == list:
-            return value[-1]
-        return value
-    
+   
     def get_model_inputs(self, model_definition):
         inputs = model_definition["inputs"]
         inputs_values = {}
         for i in inputs:
             if not "model" in inputs[i]:
                 # variable is to be taken from simulator module
-                inputs_values[i] = self.get_single_value(getattr(self, inputs[i]["variable"]))
+                inputs_values[i] = self.get_single_value(
+                    getattr(self, inputs[i]["variable"])
+                )
             else:
-                inputs_values[i] = self.get_single_value(getattr(self.models[inputs[i]["model"]], inputs[i]["variable"]))
+                inputs_values[i] = self.get_single_value(
+                    getattr(self.models[inputs[i]["model"]], inputs[i]["variable"])
+                )
         return inputs_values
+
+    @staticmethod
+    def get_single_value(value):
+        if type(value) == list:
+            return value[-1]
+        return value

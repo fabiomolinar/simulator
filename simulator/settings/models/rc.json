@@ -12,5 +12,10 @@
             "model": "sig",
             "variable": "current_value"
         }
+    },
+    "plot": {
+        "Q": {},
+        "Vr": {},
+        "Vc": {}
     }
 }

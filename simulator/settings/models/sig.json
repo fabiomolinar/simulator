@@ -27,5 +27,10 @@
         "cycle": {
             "variable": "i"
         }
+    },
+    "plot": {
+        "current_value": {
+            "legend": "Vin"
+        }
     }
 }
