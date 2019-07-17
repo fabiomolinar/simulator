@@ -12,6 +12,12 @@ Below the results from runing a RC (resistor-capacitor) circuit.
 
 To run the model, it sufices to run the `run_sim.py` python script which is located at the project folder. In other words, from the project directory, run this command: `python run_sim.py`.
 
+## To do
+
+- Store variables to be ploted on the Plot class
+    - Problem: Some variables have largely different scales than others; therefore, when ploted on the same scale, it's not possible to see them clearly.
+    - Solution: for variables that need scaling, store them on the Plot class.
+
 ## Python
 
 Notes related to creating this Python project.

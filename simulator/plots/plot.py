@@ -3,6 +3,7 @@ import warnings
 import json
 import matplotlib.pyplot as plt
 from ..settings import simulator_settings
+from  .line import Line
 
 class Plot:
     def __init__(self, path_to_models, sim):
@@ -45,15 +46,16 @@ class Plot:
         if "plot" in spec:
             for i in spec["plot"]:
                 model = self.sim.models[spec["name"]]
+                line = Line(model, i, spec["plot"][i])
                 # creating key to avoid moels with the same variable name to overide each other
                 key = spec["name"] + "_" + i
                 label = spec["plot"][i]["legend"] if "legend" in spec["plot"][i] else i
-                plot, = self.ax.plot(self.sim.t, getattr(model, i), label=label)
+                # fill plot with first values
+                plot, = self.ax.plot(self.sim.t, line.get_values(), label=label)
                 plots.update({
                     key: {
                         "plot": plot,
-                        "model": model,
-                        "variable": i
+                        "line": line
                     }
                 })
         return plots
@@ -61,11 +63,8 @@ class Plot:
     def plot(self):
         # Update values
         for i in self.plots:
-            plots = self.plots
-            plots[i]["plot"].set_xdata(self.sim.t)
-            plots[i]["plot"].set_ydata(
-                getattr(plots[i]["model"], plots[i]["variable"])
-            )
+            self.plots[i]["plot"].set_xdata(self.sim.t)
+            self.plots[i]["plot"].set_ydata(self.plots[i]["line"].get_values())
         # Update plot
         self.ax.relim()
         self.ax.autoscale_view(True, True, True)
