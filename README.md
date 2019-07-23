@@ -14,9 +14,9 @@ To run the model, it sufices to run the `run_sim.py` python script which is loca
 
 ## To do
 
-- Store variables to be ploted on the Plot class
+- <span style="text-decoration: line-through">Store variables to be ploted on the Plot class</span> [done]
     - Problem: Some variables have largely different scales than others; therefore, when ploted on the same scale, it's not possible to see them clearly.
-    - Solution: for variables that need scaling, store them on the Plot class.
+    - Solution: use the plots.Line class which is capable to handle scaling.
 
 ## Python
 
@@ -28,15 +28,18 @@ To make modules visible to each other, they should all be contained within one s
 
     project_folder
         project_package
+            __init__.py
             package1
-                module1
-                module2
+                __init__.py
+                module1.py
+                module2.py
             package2
-                module3
-                module4
+                __init__.py
+                module3.py
+                module4.py
         [other files]
 
-Other files could be scripts, README.md, LICENSE, .gitignore, etc.
+Other files could be scripts, tests, README.md, LICENSE, .gitignore, etc.
 
 ### VScode
 
@@ -56,3 +59,16 @@ Since this project is configured to be a package, a script (`run_sim.py`) was cr
 Since the tests are not inside the same package as the project package, on the test modules it's necessary to import the project modules using absolute paths. For example, instead of doing **from ...models import rc**, it's necessary to do **from simulator.models import rc**.
 
 To run the tests, it sufices to run the following command from the project's directory (if not actually using VScode's extensions): `python -m unittest discover -v` (for the verbose option).
+
+#### Unit tests debugging
+
+Since the tests package is outside the project package, it's necessary to add a debugger configuration in order to be able to debug the tests. The following configuration is used (calling the `unittest` as a module):
+
+    {
+        "name": "Python: Debugging",
+        "type": "python",
+        "request": "launch",
+        "module": "unittest"
+    }
+
+This setup runs the tests with the debugger.
