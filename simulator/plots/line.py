@@ -23,5 +23,8 @@ class Line():
             """ For additional values on the returned values 
             from the model transform and save it """
             for value in itertools.islice(model_values, len(self.transformed_values), None):
-                self.transformed_values.append(value*self.multiplier)
+                if not value:
+                    self.transformed_values.append(None)
+                else:
+                    self.transformed_values.append(value*self.multiplier)
             return self.transformed_values

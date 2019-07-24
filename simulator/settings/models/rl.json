@@ -9,13 +9,15 @@
     },
     "inputs": {
         "Vin": {
-            "model": "sig",
-            "variable": "current_value"
+            "model": "rc",
+            "variable": "Vc"
         }
     },
     "plot": {
         "i": {},
         "Vr": {},
-        "Vl": {}
+        "Vl": {
+            "multiplier": 3
+        }
     }
 }

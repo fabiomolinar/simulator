@@ -3,8 +3,8 @@
     "class": "RC",
     "order": 1,
     "params": {
-        "resistance": 100,
-        "capacitance": 0.1,
+        "resistance": 2,
+        "capacitance": 0.4,
         "charge": 0.0
     },
     "inputs": {

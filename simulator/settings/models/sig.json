@@ -11,14 +11,19 @@
             },
             {
                 "step": {
-                    "cycle": 10000,
+                    "cycle": 6000,
                     "value": 0
                 }
             },
             {
                 "ramp_up": {
-                    "cycle": 20000,
-                    "value": 0.0001
+                    "cycle": 10000,
+                    "value": 0.001
+                }
+            },
+            {
+                "pause": {
+                    "cycle": 15000
                 }
             }
         ]

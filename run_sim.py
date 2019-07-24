@@ -12,4 +12,4 @@ def run(duration, dt):
     sim.run(plot)
     
 if __name__ == "__main__":
-    run(60, 0.001)
+    run(20, 0.001)

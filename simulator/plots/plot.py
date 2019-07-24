@@ -49,7 +49,7 @@ class Plot:
                 line = Line(model, i, spec["plot"][i])
                 # creating key to avoid moels with the same variable name to overide each other
                 key = spec["name"] + "_" + i
-                label = spec["plot"][i]["legend"] if "legend" in spec["plot"][i] else i
+                label = self.create_legend(spec, i)
                 # fill plot with first values
                 plot, = self.ax.plot(self.sim.t, line.get_values(), label=label)
                 plots.update({
@@ -59,6 +59,12 @@ class Plot:
                     }
                 })
         return plots
+
+    def create_legend(self, spec, el):
+        label = spec["plot"][el]["legend"] if "legend" in spec["plot"][el] else el
+        if "multiplier" in spec["plot"][el]:
+            label = label + " [x{}]".format(spec["plot"][el]["multiplier"])
+        return label
 
     def plot(self):
         # Update values
