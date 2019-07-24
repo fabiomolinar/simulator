@@ -25,5 +25,5 @@ class RC:
         self.Q1.append(self.Q[-1])
         # save input just for recording
         self.Vin.append(Vin)
-        # return the current
+        # return the charge
         return self.Q[-1]

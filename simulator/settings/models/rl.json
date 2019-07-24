@@ -1,0 +1,21 @@
+{
+    "name": "rl",
+    "class": "RL",
+    "order": 2,
+    "params": {
+        "resistance": 2,
+        "inductance": 1,
+        "current": 0.0
+    },
+    "inputs": {
+        "Vin": {
+            "model": "sig",
+            "variable": "current_value"
+        }
+    },
+    "plot": {
+        "i": {},
+        "Vr": {},
+        "Vl": {}
+    }
+}
