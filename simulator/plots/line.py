@@ -14,6 +14,7 @@ class Line():
         self.multiplier = spec["multiplier"] if "multiplier" in spec else None
         self.spec = spec
         self.transformed_values = []
+        self.first = True
 
     def get_values(self):
         model_values = getattr(self.model, self.variable)
@@ -23,7 +24,7 @@ class Line():
             """ For additional values on the returned values 
             from the model transform and save it """
             for value in itertools.islice(model_values, len(self.transformed_values), None):
-                if not value:
+                if value == None:
                     self.transformed_values.append(None)
                 else:
                     self.transformed_values.append(value*self.multiplier)
