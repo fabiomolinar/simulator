@@ -1,6 +1,7 @@
 {
     "name": "rl",
     "class": "RL",
+    "enabled": true,
     "order": 2,
     "params": {
         "resistance": 2,
@@ -9,8 +10,8 @@
     },
     "inputs": {
         "Vin": {
-            "model": "rc",
-            "variable": "Vc"
+            "model": "sig",
+            "variable": "current_value"
         }
     },
     "plot": {

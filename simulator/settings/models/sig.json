@@ -1,6 +1,7 @@
 {
     "name": "sig",
     "class": "SignalGenerator",
+    "enabled": true,
     "order": 0,
     "params": {
         "events": [

@@ -1,6 +1,7 @@
 {
     "name": "rc",
     "class": "RC",
+    "enabled": false,
     "order": 1,
     "params": {
         "resistance": 2,

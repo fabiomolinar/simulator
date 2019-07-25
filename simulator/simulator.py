@@ -34,11 +34,15 @@ class Simulator:
                 f = path + "/" + f
                 with open(f, "r") as rf:
                     d = json.load(rf)
-                    models.update(self.add_model(d))
+                    model_def = self.add_model(d)
+                    if model_def:
+                        models.update(model_def)
         return models
 
     def add_model(self, spec):
         """ Adds a model to the class by using a dict as specification """
+        if not ("enabled" in spec and spec["enabled"]):
+            return None
         model = {}
         spec["params"]["dt"] = self.dt
         try:

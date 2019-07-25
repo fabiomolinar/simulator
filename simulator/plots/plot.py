@@ -37,11 +37,15 @@ class Plot:
                 f = path + "/" + f
                 with open(f, "r") as rf:
                     d = json.load(rf)
-                    plots.update(self.add_plots(d))
+                    plot_def = self.add_plots(d)
+                    if plot_def:
+                        plots.update(plot_def)
         return plots
 
     def add_plots(self, spec):
         """ Adds a plot to the class by using a dict as specification """
+        if not ("enabled" in spec and spec["enabled"]):
+            return None
         plots = {}
         if "plot" in spec:
             for i in spec["plot"]:
