@@ -1,0 +1,33 @@
+# Invalid JSON file with comments marked by "#" only to 
+# document the expected data structure to create models from a JSON file.
+{
+    "name": "pid",      # name of the instance that will be attributed to the model
+    "class": "PID",     # name of the class from where to instance the model
+    "enabled": false,   # if false, this spec will be ignored
+    "order": 2,         # model order of execution within the simulator loop
+    "params": {         # list of parameters necessary to instantiate the model
+        "Kp": 2,
+        "Ti": 10,
+        "Td": 0.01,
+        "error": 0
+    },
+    "inputs": {         # list of inputs expected by the calculate method of the model
+        "SP": {
+            "value": 10         # a constant value
+        },
+        "PV": {
+            "model": "rl",      # a value retrieved from another model
+            "variable": "Vr"
+        },
+        "FWD": {                # a value retrieved from the simulator instance
+            "variable": "i"
+        }
+    },
+    "plot": {                   # definition of the data from the model to be plotted
+        "error": {
+            "multiplier": 10    # this line will be multiplied by 10 before being plotted
+        },
+        "SP": {},
+        "MV": {}
+    }
+}

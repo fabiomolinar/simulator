@@ -2,7 +2,7 @@
     "name": "rl",
     "class": "RL",
     "enabled": true,
-    "order": 2,
+    "order": 1,
     "params": {
         "resistance": 2,
         "inductance": 1,
@@ -10,15 +10,15 @@
     },
     "inputs": {
         "Vin": {
-            "model": "rc",
-            "variable": "Vc"
+            "model": "pid",
+            "variable": "MV"
         }
     },
     "plot": {
         "i": {},
         "Vr": {},
         "Vl": {
-            "multiplier": 3
+            "multiplier": 1.0
         }
     }
 }

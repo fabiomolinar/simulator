@@ -1,24 +1,24 @@
 class PID:
     """ A class used to model a PID regulator """
-    def __init__(self, dt, Kp, Ti, Td, error0 = 0):
+    def __init__(self, dt, Kp, Ti, Td, error = 0):
         # constants
         self.dt = dt
         self.Kp = [Kp]
         self.Ti = [Ti]
         self.Td = [Td]
         # state variable
-        self.error = [error0]
+        self.error = [error]
         # inputs
         self.PV = [None]
         self.SP = [None]
         # other
-        self.I = [None]
-        self.D = [None]
-        self.PG = [None]
-        self.IG = [None]
-        self.DG = [None]
+        self.I = [0]
+        self.D = [0]
+        self.PG = [0]
+        self.IG = [0]
+        self.DG = [0]
         # output
-        self.MV = [None]
+        self.MV = [0]
 
 
     def calculate(self, SP, PV, FWD):

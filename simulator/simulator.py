@@ -7,6 +7,7 @@ from .models.signal_generator import SignalGenerator
 from .models.electric_motor import ElectricMotor
 from .models.rc import RC
 from .models.rl import RL
+from .models.pid import PID
 from .settings import simulator_settings
 
 class Simulator:
