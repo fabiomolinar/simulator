@@ -24,8 +24,6 @@
     "plot": {
         "error": {},
         "SP": {},
-        "MV": {
-            "multiplier": 1.0
-        }
+        "MV": {}
     }
 }
