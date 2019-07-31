@@ -102,7 +102,10 @@ class Simulator:
         inputs = model_definition["inputs"]
         inputs_values = {}
         for i in inputs:
-            if not "model" in inputs[i]:
+            if "value" in inputs[i]:
+                # Input to the model is a constant defined on the specification
+                inputs_values[i] = inputs[i]["value"]
+            elif not "model" in inputs[i]:
                 # Variable is to be taken from simulator module
                 inputs_values[i] = self.get_single_value(
                     getattr(self, inputs[i]["variable"])
