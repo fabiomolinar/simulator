@@ -1,7 +1,7 @@
 {
     "name": "sig",
     "class": "SignalGenerator",
-    "enabled": false,
+    "enabled": true,
     "order": 0,
     "params": {
         "events": [
@@ -36,7 +36,7 @@
     },
     "plot": {
         "current_value": {
-            "legend": "Vin"
+            "legend": "SP"
         }
     }
 }

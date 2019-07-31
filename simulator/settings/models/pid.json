@@ -6,12 +6,13 @@
     "params": {
         "Kp": 4,
         "Ti": 1,
-        "Td": 0.0,
+        "Td": 0.001,
         "error": 0
     },
     "inputs": {
         "SP": {
-            "value": 10
+            "model": "sig",
+            "variable": "current_value"
         },
         "PV": {
             "model": "rl",
@@ -24,6 +25,9 @@
     "plot": {
         "error": {},
         "SP": {},
-        "MV": {}
+        "MV": {},
+        "PG": {},
+        "IG": {},
+        "DG": {}
     }
 }

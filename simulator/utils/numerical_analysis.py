@@ -1,5 +1,3 @@
-from collections import deque
-
 class DumbIntegrator:
     """ The dumbest possible numerical integrator """
     def __init__(self, m0 = 0):
@@ -15,7 +13,7 @@ class DumbIntegrator:
         self.m0 = total_area
         return total_area
 
-class DumbDerivator:
+class DumbDifferentiator:
     """ The dumbest possible numerical derivator """
     def __init__(self):
         self.y0 = None
