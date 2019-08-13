@@ -25,3 +25,37 @@ class RL:
         self.Vin.append(Vin)
         # return the current
         return self.i[-1]
+
+class RLLimitedVr(RL):
+    """ A RL class that limits the value of Vr to a maximum value 
+        by adding a dynamic resistance (Rd) in series with R.
+    """
+    def __init__(self, dt, resistance, inductance, current, max_Vr):
+        super().__init__(self, dt, resistance, inductance, current)
+        # constants
+        self.max_Vr = [max_Vr]
+        # others
+        self.Rd = [None]        
+        self.Vrd = [None]
+
+    def calculate(self, Vin):
+        i = super().calculate(Vin)
+        # values for Vr < max_Vr
+        Rd = 0.
+        Vrd = 0.
+        Vr = self.Vr[-1]
+        # values if Vr > max_Vr
+        max_Vr = self.max_Vr[-1]
+        if Vr > max_Vr:
+            Vrd = max_Vr - Vr
+            Rd = Vrd/i
+            # update Vr
+            self.Vr[-1] = max_Vr
+        # save values and return
+        self.Rd.append(Rd)
+        self.Vrd.append(Vrd)
+        return i
+
+        
+
+
