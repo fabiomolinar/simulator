@@ -1,7 +1,7 @@
 {
     "name": "pid",
     "class": "PID",
-    "enabled": false,
+    "enabled": true,
     "order": 2,
     "params": {
         "Kp": 4,

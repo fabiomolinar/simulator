@@ -1,0 +1,42 @@
+{
+    "name": "sig",
+    "class": "SignalGenerator",
+    "enabled": true,
+    "order": 0,
+    "params": {
+        "events": [
+            {
+                "start": {
+                    "value": 10
+                }
+            },
+            {
+                "step": {
+                    "cycle": 6000,
+                    "value": 0
+                }
+            },
+            {
+                "ramp_up": {
+                    "cycle": 10000,
+                    "value": 0.001
+                }
+            },
+            {
+                "pause": {
+                    "cycle": 15000
+                }
+            }
+        ]
+    },
+    "inputs": {
+        "cycle": {
+            "variable": "i"
+        }
+    },
+    "plot": {
+        "current_value": {
+            "legend": "SP"
+        }
+    }
+}
