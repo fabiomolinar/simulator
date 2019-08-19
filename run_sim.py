@@ -4,7 +4,9 @@ from simulator.models.signal_generator import SignalGenerator
 from simulator.models.rc import RC
 from simulator.plots.plot import Plot
 
-def run(duration, dt):
+def run():
+    duration = simulator_settings["duration"]
+    dt = simulator_settings["dt"]
     sim = Simulator(simulator_settings["path_to_models"], dt, duration)
     if simulator_settings["show_plot"]:
         plot = Plot(simulator_settings["path_to_models"], sim)
@@ -12,4 +14,4 @@ def run(duration, dt):
     sim.run(plot)
     
 if __name__ == "__main__":
-    run(20.0, 0.001)
+    run()
