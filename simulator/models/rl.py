@@ -31,7 +31,7 @@ class RLLimitedVr(RL):
         by adding a dynamic resistance (Rd) in series with R.
     """
     def __init__(self, dt, resistance, inductance, current, max_Vr):
-        super().__init__(self, dt, resistance, inductance, current)
+        super().__init__(dt, resistance, inductance, current)
         # constants
         self.max_Vr = [max_Vr]
         # others
@@ -47,7 +47,7 @@ class RLLimitedVr(RL):
         # values if Vr > max_Vr
         max_Vr = self.max_Vr[-1]
         if Vr > max_Vr:
-            Vrd = max_Vr - Vr
+            Vrd = Vr - max_Vr
             Rd = Vrd/i
             # update Vr
             self.Vr[-1] = max_Vr

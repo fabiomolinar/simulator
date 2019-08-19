@@ -11,12 +11,14 @@
     },
     "inputs": {
         "Vin": {
-            "model": "pid",
-            "variable": "MV"
+            "model": "sig",
+            "variable": "current_value"
         }
     },
     "plot": {
+        "i": {},
         "Vr": {},
+        "Vl": {},
         "Vrd": {}
     }
 }

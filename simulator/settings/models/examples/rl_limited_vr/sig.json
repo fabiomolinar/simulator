@@ -9,12 +9,6 @@
                 "start": {
                     "value": 10
                 }
-            },
-            {
-                "step": {
-                    "cycle": 5000,
-                    "value": 4
-                }
             }
         ]
     },
@@ -25,7 +19,7 @@
     },
     "plot": {
         "current_value": {
-            "legend": "SP"
+            "legend": "Vin"
         }
     }
 }

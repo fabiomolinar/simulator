@@ -1,7 +1,7 @@
 {
     "name": "pid",
     "class": "PID",
-    "enabled": false,
+    "enabled": true,
     "order": 2,
     "params": {
         "Kp": 4,
@@ -15,7 +15,7 @@
             "variable": "current_value"
         },
         "PV": {
-            "model": "rl",
+            "model": "rl_limited_vr",
             "variable": "Vr"
         },
         "FWD": {
@@ -24,7 +24,6 @@
     },
     "plot": {
         "error": {},
-        "SP": {},
         "MV": {},
         "PG": {},
         "IG": {},
