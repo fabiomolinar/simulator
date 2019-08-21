@@ -9,6 +9,7 @@ from .models.rc import RC
 from .models.rl import RL
 from .models.rl import RLLimitedVr
 from .models.pid import PID
+from .models.pid import PIDLimitedMV
 from .settings import simulator_settings
 
 class Simulator:

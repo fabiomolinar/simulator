@@ -1,15 +1,13 @@
 {
     "name": "pid",
-    "class": "PIDLimitedMV",
+    "class": "PID",
     "enabled": true,
     "order": 2,
     "params": {
         "Kp": 4,
         "Ti": 1,
         "Td": 0.001,
-        "error": 0,
-        "min_MV": 0,
-        "max_MV": 8
+        "error": 0
     },
     "inputs": {
         "SP": {
