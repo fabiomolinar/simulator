@@ -4,7 +4,7 @@
     "enabled": true,
     "order": 2,
     "params": {
-        "Kp": 4,
+        "Kp": 2,
         "Ti": 1,
         "Td": 0.001,
         "error": 0,
@@ -17,7 +17,7 @@
             "variable": "current_value"
         },
         "PV": {
-            "model": "rl_limited_vr",
+            "model": "rl",
             "variable": "Vr"
         },
         "FWD": {

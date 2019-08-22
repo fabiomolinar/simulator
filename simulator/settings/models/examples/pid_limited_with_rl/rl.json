@@ -1,13 +1,12 @@
 {
-    "name": "rl_limited_vr",
-    "class": "RLLimitedVr",
+    "name": "rl",
+    "class": "RL",
     "enabled": true,
     "order": 1,
     "params": {
         "resistance": 2,
         "inductance": 10,
-        "current": 0.0,
-        "max_Vr": 8.0
+        "current": 0.0
     },
     "inputs": {
         "Vin": {
@@ -16,7 +15,6 @@
         }
     },
     "plot": {
-        "Vr": {},
-        "Vrd": {}
+        "Vr": {}
     }
 }
