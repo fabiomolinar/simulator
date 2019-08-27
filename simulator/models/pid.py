@@ -82,7 +82,7 @@ class PIDLimitedMV(PID):
         max_MV = self.max_MV[-1]
         min_MV = self.min_MV[-1]
         # limit MV
-        if max_MW and MV > max_MV:
+        if max_MV and MV > max_MV:
             self.MV[-1] = max_MV
             return max_MV
         if min_MV and MV < min_MV:
@@ -102,10 +102,10 @@ class PIDLimitedIntegral(PIDLimitedMV):
                  min_MV = None, max_MV = None, 
                  min_integral = None, max_integral = None, 
                  db_derivative = 0, differ_on_PV = True):
-        super().__init__(self, dt, Kp, Ti, Td, error = 0, min_MV, max_MV)
+        super().__init__(self, dt, Kp, Ti, Td, error, min_MV, max_MV)
         # settings
-        self.min_integral = [set_min_integral(min_integral)]
-        self.max_integral = [set_max_integral(max_integral)]
+        self.min_integral = [self.set_min_integral(min_integral)]
+        self.max_integral = [self.set_max_integral(max_integral)]
         self.db_derivative = [db_derivative]
         self.differ_on_PV = [differ_on_PV]
 
