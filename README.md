@@ -17,6 +17,14 @@ To run the model, it sufices to run the `run_sim.py` python script which is loca
 - <span style="text-decoration: line-through">Store variables to be ploted on the Plot class</span> [done]
     - Problem: Some variables have largely different scales than others; therefore, when ploted on the same scale, it's not possible to see them clearly.
     - Solution: use the plots.Line class which is capable to handle scaling.
+- Add improved PID regulator algorithm.
+- Add information about time constant to each model.
+- Add to the simulator information if cycle time is to slow compared with models' time constants.
+    - Problem: if the cycle time is too big to impact the dynamics of the models, I need to warn it.
+- Change place where data is stored.
+    - Problem: each model is holding its own data. That's not effective. Not all data may be necessary and doing operation on arrays isn't as fast as doing on simple numbers. Furthermore, the models' `calculate` method is damn ugly.
+    - Solution: create a DataHolder class which will hold only the selected data.
+
 
 ## Python
 
