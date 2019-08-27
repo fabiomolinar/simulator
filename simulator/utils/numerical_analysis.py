@@ -24,3 +24,18 @@ class DumbDifferentiator:
         # update state
         self.y0 = y
         return rate
+
+class DeadBand:
+    def __init__(self, db, offset = 0):
+        """ Deadband with offset """
+        self.db = db
+        self.offset = offset
+
+    def calculate(self, val):
+        offset, db = self.offset, self.db
+        if val > offset + db:
+            return val - db
+        if val < offset - db:
+            return val + db
+        return offset
+
