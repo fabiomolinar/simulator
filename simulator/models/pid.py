@@ -1,5 +1,5 @@
 from .base import BaseModel
-from ..utils.numerical_analysis import DumbDifferentiator, DumbIntegrator
+from ..utils.numerical_analysis import DumbDifferentiator, DumbIntegrator, DeadBand
 
 class PID(BaseModel):
     """A class used to model the most simple PID regulator possible.
@@ -94,29 +94,49 @@ class PIDLimitedIntegral(PIDLimitedMV):
     """Improved PID implementation 
 
     Args:
-        min_integral (float): lower limit value for the integral action.
-        max_integral (float): upper limit value for the integral action.
-        db_derivative (bool): deadband applied to the derivative action.
+        db_DG (bool): deadband applied to the derivative action.
     """
     def __init__(self, dt, Kp, Ti, Td, error = 0, 
                  min_MV = None, max_MV = None, 
-                 min_integral = None, max_integral = None, 
-                 db_derivative = 0, differ_on_PV = True):
-        super().__init__(self, dt, Kp, Ti, Td, error, min_MV, max_MV)
+                 db_DG = 0, differ_on_PV = True):
+        super().__init__(dt, Kp, Ti, Td, error, min_MV, max_MV)
         # settings
-        self.min_integral = [self.set_min_integral(min_integral)]
-        self.max_integral = [self.set_max_integral(max_integral)]
-        self.db_derivative = [db_derivative]
         self.differ_on_PV = [differ_on_PV]
+        self.db = DeadBand(db_DG)
 
-    def set_min_integral(self, min_integral):
-        min_MV = self.min_MV
-        if min_MV and min_integral and min_integral < min_MV:
-            return min_MV
-        return min_integral
-
-    def set_max_integral(self, max_integral):
-        max_MV = self.max_MV
-        if max_MV and max_integral and max_integral > max_MV:
-            return max_MV
-        return max_integral
+    def calculate(self, SP, PV, FWD):
+        Kp = self.Kp[-1]
+        Ti = self.Ti[-1]
+        Td = self.Td[-1]
+        max_MV = self.max_MV[-1]
+        min_MV = self.min_MV[-1]
+        # error
+        error = SP - PV
+        # gains
+        PG = Kp*error
+        IG = self.I.calculate(self.dt, error)*Kp/Ti
+        if self.differ_on_PV:
+            DG = self.db.calculate(self.D.calculate(self.dt, PV)*Kp*Td)
+        else:
+            DG = self.db.calculate(self.D.calculate(self.dt, error)*Kp*Td)
+        # output
+        MV = PG + IG + DG + FWD
+        # anti-windup logic
+        winded_up = False
+        if max_MV and MV > max_MV:
+            MV = max_MV
+            winded_up = True
+        if min_MV and MV < min_MV:
+            MV = min_MV
+            winded_up = True
+        if winded_up:
+            IG = MV - PG - DG - FWD
+            self.I.reset(IG*Ti/Kp)
+        # update attributes
+        self.update_attributes(**{
+            "error": error,
+            "PG": PG,
+            "IG": IG,
+            "DG": DG,
+            "MV": MV
+        })

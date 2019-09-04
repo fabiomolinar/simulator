@@ -4,6 +4,9 @@ class DumbIntegrator:
         self.m0 = m0
         self.y0 = None
 
+    def reset(self, new_m0):
+        self.m0 = new_m0
+
     def calculate(self, dt, y):
         y0 = self.y0 if self.y0 else y
         new_area = dt*((y0 + y)/2)

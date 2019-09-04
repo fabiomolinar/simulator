@@ -1,0 +1,31 @@
+{
+    "name": "sig",
+    "class": "SignalGenerator",
+    "enabled": true,
+    "order": 0,
+    "params": {
+        "events": [
+            {
+                "start": {
+                    "value": 10
+                }
+            },
+            {
+                "step": {
+                    "cycle": 35000,
+                    "value": 4
+                }
+            }
+        ]
+    },
+    "inputs": {
+        "cycle": {
+            "variable": "i"
+        }
+    },
+    "plot": {
+        "current_value": {
+            "legend": "SP"
+        }
+    }
+}
