@@ -82,10 +82,10 @@ class PIDLimitedMV(PID):
         max_MV = self.max_MV[-1]
         min_MV = self.min_MV[-1]
         # limit MV
-        if max_MV and MV > max_MV:
+        if max_MV is not None and MV > max_MV:
             self.MV[-1] = max_MV
             return max_MV
-        if min_MV and MV < min_MV:
+        if min_MV is not None and MV < min_MV:
             self.MV[-1] = min_MV
             return min_MV
         return MV
@@ -123,10 +123,10 @@ class PIDLimitedIntegral(PIDLimitedMV):
         MV = PG + IG + DG + FWD
         # anti-windup logic
         winded_up = False
-        if max_MV and MV > max_MV:
+        if max_MV is not None and MV > max_MV:
             MV = max_MV
             winded_up = True
-        if min_MV and MV < min_MV:
+        if min_MV is not None and MV < min_MV:
             MV = min_MV
             winded_up = True
         if winded_up:
