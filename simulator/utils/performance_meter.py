@@ -40,12 +40,15 @@ class Overshoot(ModelProxy):
     def __init__(self, settings):
         self.Y_settings = settings["Y"]
         self.SP_settings = settings["SP"]
+        self.base = None
         self.max = 0
 
     def calculate(self, sim):
         Y = self.get_value(self.Y_settings, sim)
         SP = self.get_value(self.SP_settings, sim)
-        overshoot = Y/SP
+        if not self.base:
+            self.base = Y - SP
+        overshoot = (SP - Y)/self.base
         if overshoot > self.max:
             self.max = overshoot
         return self.max
@@ -57,12 +60,16 @@ class SettlingTime(ModelProxy):
         self.dx_threshold = settings["dx_threshold"]
         self.range = settings["range"]
         self.D = DumbDifferentiator()
+        self.settled = False
+        self.settle_time = 0
 
     def calculate(self, sim):
         Y = self.get_value(self.Y_settings, sim)
         SP = self.get_value(self.SP_settings, sim)
         if self.within_range(Y, SP) and self.stabilized(Y, sim):
-            return 
+            self.settled = True
+            self.settle_time = sim.t[-1]
+            return self.settle_time
 
     def within_range(self, Y, SP):
         absolute_difference = abs((Y-SP)/SP)
