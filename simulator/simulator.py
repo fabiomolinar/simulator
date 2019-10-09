@@ -70,7 +70,7 @@ class Simulator:
     def stop_running(self, *args):
         self.running = False
     
-    def run(self, plot = None):
+    def run(self, plot = None, pf = None):
         for i in range(self.cycles):
             if not self.running:
                 break
@@ -81,6 +81,9 @@ class Simulator:
                 self.models[model_definition["name"]].calculate(**model_inputs)
             # update time
             self.t.append(self.t[-1] + self.dt)
+            # Performance meter
+            if pf and simulator_settings["performance_meter"]["enabled"]:
+                pf.calculate()
             # ploting
             if plot and simulator_settings["show_plot"]:
                 cycles_to_update = simulator_settings["plot_update_frequency"]/self.dt
@@ -93,6 +96,9 @@ class Simulator:
                     # Will plot at every cycle
                     # NOT RECOMMENDED!!! May slow down the plotting
                     plot.plot()
+        # Print performance if calculated
+        if pf and simulator_settings["performance_meter"]["enabled"]:
+            print(pf.result_to_string())
         # At the end, keep plot open
         if plot and simulator_settings["show_plot"]:
             plot.end()

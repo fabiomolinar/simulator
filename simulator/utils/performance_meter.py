@@ -1,4 +1,5 @@
 import warnings
+import sys
 from .numerical_analysis import DumbDifferentiator
 from ..settings import simulator_settings
 
@@ -20,7 +21,7 @@ class PerformanceMeter:
         for mea in config["measurements"]:
             try:
                 class_ = getattr(sys.modules[__name__], mea["class"])
-                instance_ = class_(**mea["settings"])
+                instance_ = class_(mea["settings"])
                 measurements.append(instance_)
             except NameError:
                 warnings.warn("Couldn't instantiate a class named {}".format(mea["class"]))
@@ -31,10 +32,21 @@ class PerformanceMeter:
         for mea in self.measurements:
             mea.calculate(self.sim)
 
+    def result_to_string(self):
+        result = ""
+        for mea in self.measurements:
+            result += mea.result_to_string()
+        if result == "":
+            return "No measurements to show. "
+        return result
+
 class ModelProxy:
     def get_value(self, settings, sim):
         instance_ = sim.models[settings["object_name"]]
         return getattr(instance_, settings["attribute"])
+
+    def result_to_string(self):
+        return "Result string not defined for {}. ".format(self.__class__.__name__)
 
 class Overshoot(ModelProxy):
     def __init__(self, settings):
@@ -44,8 +56,8 @@ class Overshoot(ModelProxy):
         self.max = 0
 
     def calculate(self, sim):
-        Y = self.get_value(self.Y_settings, sim)
-        SP = self.get_value(self.SP_settings, sim)
+        Y = self.get_value(self.Y_settings, sim)[-1]
+        SP = self.get_value(self.SP_settings, sim)[-1]
         if not self.base:
             self.base = Y - SP
         overshoot = (SP - Y)/self.base
@@ -53,20 +65,25 @@ class Overshoot(ModelProxy):
             self.max = overshoot
         return self.max
 
+    def result_to_string(self):
+        return "Max overshoot = {}. ".format(self.max)
+
 class SettlingTime(ModelProxy):
     def __init__(self, settings):
         self.Y_settings = settings["Y"]
         self.SP_settings = settings["SP"]
         self.dx_threshold = settings["dx_threshold"]
+        self.dx_cycles_hold = settings["dx_cycles_hold"]
         self.range = settings["range"]
         self.D = DumbDifferentiator()
+        self.cycles_held = 0
         self.settled = False
         self.settle_time = 0
 
     def calculate(self, sim):
-        Y = self.get_value(self.Y_settings, sim)
-        SP = self.get_value(self.SP_settings, sim)
-        if self.within_range(Y, SP) and self.stabilized(Y, sim):
+        Y = self.get_value(self.Y_settings, sim)[-1]
+        SP = self.get_value(self.SP_settings, sim)[-1]
+        if not self.settled and self.within_range(Y, SP) and self.stabilized(Y, sim):
             self.settled = True
             self.settle_time = sim.t[-1]
             return self.settle_time
@@ -77,4 +94,14 @@ class SettlingTime(ModelProxy):
 
     def stabilized(self, Y, sim):
         derivative = self.D.calculate(sim.dt, Y)
-        return derivative < self.dx_threshold
+        if derivative < self.dx_threshold:
+            self.cycles_held += 1
+        else:
+            self.cycles_held = 0
+        return self.cycles_held > self.dx_cycles_hold
+
+    def result_to_string(self):
+        if not self.settled:
+            return "System didn't stabilize. "
+        else:
+            return "Settle time = {}. ".format(self.settle_time)
