@@ -1,0 +1,12 @@
+# Invalid JSON file with comments marked by "#" only to 
+# document the expected data structure to configure the <simulator.tuner.brute.BruteTuner>.
+{
+    "p_range": [0,10],          # allowed range of values to test the proportional gain
+    "p_steps": 10,              # steps to take within range above to define values to test
+    "i_range": [0,10],          # allowed range of values to test the integral gain
+    "i_steps": 10,              # steps to take within range above to define values to test
+    "d_range": [0,10],          # allowed range of values to test the derivative gain
+    "d_steps": 10,              # steps to take within range above to define values to test
+    "steps": 10,                # default value to be used in place of 'p_steps', 'i_steps', or 'd_steps' in case these are not defined.
+    "max_combinations": 1000    # value used to calculate the number of steps if 'steps' is not defined nor 'p_steps', 'i_steps', or 'd_steps'.
+}
