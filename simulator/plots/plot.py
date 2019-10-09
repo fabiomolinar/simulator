@@ -14,6 +14,7 @@ class Plot:
         self.fig = plt.figure()
         self.ax = self.fig.add_subplot(111)
         self.plots = {}
+        self.pf_annotation = None
         
         # set pyplot to be interactive
         plt.ion()
@@ -84,4 +85,10 @@ class Plot:
         # Remove interactive mode but keeps plot opened
         plt.ioff()
         plt.show()
+
+    def plot_performance(self, pf):
+        if not self.pf_annotation:
+            self.pf_annotation = self.ax.annotate(pf.result_to_string(), xy=(0,0), xycoords="figure fraction")
+        else:
+            self.pf_annotation.set_text(pf.result_to_string())
         

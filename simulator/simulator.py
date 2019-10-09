@@ -71,6 +71,7 @@ class Simulator:
         self.running = False
     
     def run(self, plot = None, pf = None):
+        pf_enabled = pf is not None and simulator_settings["performance_meter"]["enabled"]
         for i in range(self.cycles):
             if not self.running:
                 break
@@ -82,7 +83,7 @@ class Simulator:
             # update time
             self.t.append(self.t[-1] + self.dt)
             # Performance meter
-            if pf and simulator_settings["performance_meter"]["enabled"]:
+            if pf_enabled:
                 pf.calculate()
             # ploting
             if plot and simulator_settings["show_plot"]:
@@ -91,13 +92,17 @@ class Simulator:
                     cycles_to_update = int(cycles_to_update)
                     if i % (cycles_to_update) == 0.0:
                         plot.plot()
+                        if pf_enabled:
+                            plot.plot_performance(pf)
                 else:
                     # Plot frequency higher than calculation frequency
                     # Will plot at every cycle
                     # NOT RECOMMENDED!!! May slow down the plotting
                     plot.plot()
+                    if pf_enabled:
+                        plot.plot_performance(pf)
         # Print performance if calculated
-        if pf and simulator_settings["performance_meter"]["enabled"]:
+        if pf_enabled:
             print(pf.result_to_string())
         # At the end, keep plot open
         if plot and simulator_settings["show_plot"]:
