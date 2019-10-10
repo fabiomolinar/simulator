@@ -18,13 +18,18 @@ To run the model, it sufices to run the `run_sim.py` python script which is loca
     - Problem: Some variables have largely different scales than others; therefore, when ploted on the same scale, it's not possible to see them clearly.
     - Solution: use the plots.Line class which is capable to handle scaling.
 - <span style="text-decoration: line-through">Add improved PID regulator algorithm.</span> [done]
-- Add a performance measuring class.
+- <span style="text-decoration: line-through">Add a performance measuring class.</span> [done]
 - Add information about time constant to each model.
 - Add to the simulator information if cycle time is to slow compared with models' time constants.
     - Problem: if the cycle time is too big to impact the dynamics of the models, I need to warn it.
 - Change place where data is stored.
     - Problem: each model is holding its own data. That's not effective. Not all data may be necessary and doing operation on arrays isn't as fast as doing on simple numbers. Furthermore, the models' `calculate` method is damn ugly.
     - Solution: create a DataHolder class which will hold only the selected data and will get updated at each cycle.
+- Add thread-based parallelism to the tuner classes.
+    - Problem: "brute force" methods are too slow. 
+- Make it easier to reset the state of the models during simulation.
+    - Problem: when running multiple simulations, a lot of time is wasted into rebuilding the Simulator instance multiple times.
+    - Solution: add a feature to reset the states of all models being simulated to avoid having to restart the simulator every time I want to restart a simulation run.
 
 
 ## Python
