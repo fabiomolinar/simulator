@@ -1,12 +1,27 @@
 # Invalid JSON file with comments marked by "#" only to 
 # document the expected data structure to configure the <simulator.tuner.brute.BruteTuner>.
 {
-    "p_range": [0,10],          # allowed range of values to test the proportional gain
+    "p_range": [1,10],          # allowed range of values to test the proportional gain
     "p_steps": 10,              # steps to take within range above to define values to test
     "i_range": [0,10],          # allowed range of values to test the integral gain
     "i_steps": 10,              # steps to take within range above to define values to test
     "d_range": [0,10],          # allowed range of values to test the derivative gain
     "d_steps": 10,              # steps to take within range above to define values to test
     "steps": 10,                # default value to be used in place of 'p_steps', 'i_steps', or 'd_steps' in case these are not defined.
-    "max_combinations": 1000    # value used to calculate the number of steps if 'steps' is not defined nor 'p_steps', 'i_steps', or 'd_steps'.
+    "max_combinations": 1000,   # value used to calculate the number of steps if 'steps' is not defined nor 'p_steps', 'i_steps', or 'd_steps'.
+    "regulator": {              # settings related to the PID instance of the simulator
+        "name": "pid"               # instance name
+    },
+    "cost": {                   # settings related to how the final result is calculated
+        "overshoot": {              # overshooting settings
+            "weight": 1,                # cost added per percent of overshoot
+            "name": "overshoot"         # name of the attribute used as reference to the instance holding the overshoot performance meter class
+        },
+        "settling_time": {          # settling time settings
+            "weight": 1,                # cost added per second of settling time
+            "name": "settling_time",    # name of the attribute used as reference to the instance holding the settling time performance meter class
+            "not_settled_penalty": 100  # penalty added to the cost calculation if system don't settle
+        }
+    },
+    "quiet": false              # If true, don't print result at the end
 }

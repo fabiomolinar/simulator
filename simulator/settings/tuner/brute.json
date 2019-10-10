@@ -1,10 +1,25 @@
 {
-    "p_range": [0,10],
+    "p_range": [20,60],
     "p_steps": 10,
-    "i_range": [0,10],
+    "i_range": [0.1,0.6],
     "i_steps": 10,
-    "d_range": [0,10],
-    "d_steps": 10,
+    "d_range": [0,1],
+    "d_steps": 1,
     "steps": 10,
-    "max_combinations": 1000
+    "max_combinations": 1000,
+    "regulator": {
+        "name": "pid"
+    },
+    "cost": {
+        "overshoot": {
+            "weight": 1,
+            "name": "overshoot"
+        },
+        "settling_time": {
+            "weight": 1,
+            "name": "settling_time",
+            "not_settled_penalty": 100
+        }
+    },
+    "quiet": false
 }

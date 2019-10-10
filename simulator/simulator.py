@@ -102,12 +102,13 @@ class Simulator:
                     if pf_enabled:
                         plot.plot_performance(pf)
         # Print performance if calculated
-        if pf_enabled:
+        if pf_enabled and not simulator_settings["performance_meter"]["quiet"]:
             print(pf.result_to_string())
         # At the end, keep plot open
         if plot and simulator_settings["show_plot"]:
             plot.end()
-        print("Finished")
+        if not simulator_settings["quiet"]:
+            print("Finished")
    
     def get_model_inputs(self, model_definition):
         """ Retrieves the necessary inputs for a model to calculate its next value """

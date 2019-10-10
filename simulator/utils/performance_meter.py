@@ -17,12 +17,12 @@ class PerformanceMeter:
             return False
 
     def get_measurements(self, config):
-        measurements = []
+        measurements = {}
         for mea in config["measurements"]:
             try:
                 class_ = getattr(sys.modules[__name__], mea["class"])
                 instance_ = class_(mea["settings"])
-                measurements.append(instance_)
+                measurements[mea["name"]] = instance_
             except NameError:
                 warnings.warn("Couldn't instantiate a class named {}".format(mea["class"]))
                 continue
@@ -30,12 +30,12 @@ class PerformanceMeter:
     
     def calculate(self):
         for mea in self.measurements:
-            mea.calculate(self.sim)
+            self.measurements[mea].calculate(self.sim)
 
     def result_to_string(self):
         result = ""
         for mea in self.measurements:
-            result += mea.result_to_string()
+            result += self.measurements[mea].result_to_string()
         if result == "":
             return "No measurements to show. "
         return result
