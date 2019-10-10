@@ -1,7 +1,8 @@
 from simulator.tuner.brute import BruteTuner
+from simulator.tuner.brute import RecurringBruteTuner
 
 def run():
-    brute = BruteTuner()
+    brute = RecurringBruteTuner()
     brute.run()
     
 if __name__ == "__main__":

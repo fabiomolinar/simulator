@@ -23,5 +23,10 @@
             "not_settled_penalty": 100  # penalty added to the cost calculation if system don't settle
         }
     },
-    "quiet": false              # If true, don't print result at the end
+    "quiet": false,             # if true, don't print result at the end
+    "recurring": {              # settings used by the RecurringBruteTuner class
+        "divider": 2,               # by how many times the previous range will be reduced
+        "threshold": 0.01,          # threshold to stop recurrence
+        "max_loop_runs": 10         # maximum number of times the BruteTuner will be called to run
+    }
 }
