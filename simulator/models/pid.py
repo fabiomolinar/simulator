@@ -12,7 +12,7 @@ class PID(BaseModel):
         error (float): initial value given to the
             state variable error
     """
-    def __init__(self, dt, Kp, Ti, Td, error = 0):
+    def __init__(self, dt, Kp, Ti, Td, error = 0, **kwargs):
         # constants
         self.dt = dt
         self.Kp = [Kp]

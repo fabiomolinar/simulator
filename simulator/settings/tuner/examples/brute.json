@@ -1,10 +1,10 @@
 {
-    "p_range": [77,78],
+    "p_range": [23.333,100],
     "p_steps": 1,
-    "i_range": [1,10],
-    "i_steps": 10,
-    "d_range": [0.0,0.0],
-    "d_steps": 1,
+    "i_range": [0.3,0.01],
+    "i_steps": 1,
+    "d_range": [0.01,0.001],
+    "d_steps": 10,
     "steps": 10,
     "max_combinations": 1000,
     "regulator": {

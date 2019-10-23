@@ -1,5 +1,6 @@
 # Project
 simulator/settings/models/*.json
+simulator/settings/tuner/*.json
 
 # visual studio stuff
 .vscode/

@@ -83,7 +83,7 @@ class BruteTuner:
             for i in i_to_test:
                 for d in d_to_test:
                     pid_possibilities.append([p, i, d])
-        # Adding parallelism
+        # Adding simple parallelism
         pool = Pool()
         self.results = pool.starmap(self.run_sim, pid_possibilities)
         pool.close()

@@ -3,7 +3,7 @@ import os
 simulator_settings = {
     "path_to_settings": os.path.join(os.getcwd(), "simulator", "settings"),
     "path_to_models": os.path.join(os.getcwd(), "simulator", "settings", "models"),
-    "duration": 20,
+    "duration": 25,
     "dt": 0.001,
     "show_plot": True,
     "plot_update_frequency": 1.0,
@@ -38,7 +38,7 @@ simulator_settings = {
                         "object_name": "sig",
                         "attribute": "current_value"
                     },
-                    "dx_threshold": 0.0001,
+                    "dx_threshold": 0.001,
                     "dx_cycles_hold": 1000,
                     "range": 0.02
                 }
