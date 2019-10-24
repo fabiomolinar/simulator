@@ -21,6 +21,9 @@ class DumbDifferentiator:
     def __init__(self):
         self.y0 = None
 
+    def reset(self, new_y0):
+        self.y0 = new_y0
+
     def calculate(self, dt, y):
         y0 = self.y0 if self.y0 else y
         rate = (y - y0)/dt

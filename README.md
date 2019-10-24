@@ -25,7 +25,7 @@ To run the model, it sufices to run the `run_sim.py` python script which is loca
 - Change place where data is stored.
     - Problem: each model is holding its own data. That's not effective. Not all data may be necessary and doing operation on arrays isn't as fast as doing on simple numbers. Furthermore, the models' `calculate` method is damn ugly.
     - Solution: create a DataHolder class which will hold only the selected data and will get updated at each cycle.
-- Add thread-based parallelism to the tuner classes.
+- <span style="text-decoration: line-through">Add thread-based parallelism to the tuner classes.</span> [done]
     - Problem: "brute force" methods are too slow. 
 - Make it easier to reset the state of the models during simulation.
     - Problem: when running multiple simulations, a lot of time is wasted into rebuilding the Simulator instance multiple times.

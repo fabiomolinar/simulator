@@ -14,6 +14,16 @@ class RL:
         self.Vr = [None]
         self.Vl = [None]
 
+    def reset(self):
+        # state variable
+        self.i = self.i[0:1]
+        self.i1 = self.i1[0:1]
+        # inputs
+        self.Vin = self.Vin[0:1]
+        # other
+        self.Vr = self.Vr[0:1]
+        self.Vl = self.Vl[0:1]
+
     def calculate(self, Vin):
         """ Calculates the next value and adds it to the memory """
         self.Vr.append(self.i[-1]*self.R[-1])
@@ -37,6 +47,12 @@ class RLLimitedVr(RL):
         # others
         self.Rd = [None]        
         self.Vrd = [None]
+
+    def reset(self):
+        super().reset()
+        # others
+        self.Rd = self.Rd[0:1]        
+        self.Vrd = self.Vrd[0:1]
 
     def calculate(self, Vin):
         i = super().calculate(Vin)

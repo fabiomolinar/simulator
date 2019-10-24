@@ -25,3 +25,6 @@ class BaseModel:
                     raise ValueError("Attribute exists but is not compatible with the given value", instance_attr, kwargs[attr])
             except AttributeError:
                 pass
+
+    def reset(self):
+        raise NotImplementedError("Class {} don't implement a reset method.".format(self.__class__.__name__))

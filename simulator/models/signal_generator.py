@@ -45,6 +45,10 @@ class SignalGenerator:
             if "start" in el:
                 self.current_value[0] = el["start"]["value"]
 
+    def reset(self):
+        self.current_value = self.current_value[0:1]
+        self.current_event = None
+
     def get_cycles_with_events(self):
         """ Return a list with which cycles an event change will occur. """
         cycles = []

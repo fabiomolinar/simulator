@@ -32,7 +32,6 @@ class PID(BaseModel):
         # output
         self.MV = [0]
 
-
     def calculate(self, SP, PV, FWD):
         """Calculates the next value and adds it to the memory."""
         Kp = self.Kp[-1]
@@ -55,6 +54,21 @@ class PID(BaseModel):
             "MV": MV
         })
         return MV
+
+    def reset(self):
+        # state variable
+        self.error = self.error[0:1]
+        # inputs
+        self.PV = self.PV[0:1]
+        self.SP = self.SP[0:1]
+        # other
+        self.I.reset(0.)
+        self.D.reset(0.)
+        self.PG = self.PG[0:1]
+        self.IG = self.IG[0:1]
+        self.DG = self.DG[0:1]
+        # output
+        self.MV = self.MV[0:1]
         
 class PIDLimitedMV(PID):
     """PID regulator with limited MV
@@ -138,5 +152,7 @@ class PIDLimitedIntegral(PIDLimitedMV):
             "PG": PG,
             "IG": IG,
             "DG": DG,
-            "MV": MV
+            "MV": MV,
+            "SP": SP,
+            "PV": PV
         })

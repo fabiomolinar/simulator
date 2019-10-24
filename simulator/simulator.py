@@ -136,3 +136,11 @@ class Simulator:
         if type(value) == list:
             return value[-1]
         return value
+
+    def reset(self):
+        # Reset models
+        for model in self.models:
+            self.models[model].reset()
+        # Reset simulator
+        self.t = [0]
+        self.i = 0  # current cycle
