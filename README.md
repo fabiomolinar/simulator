@@ -8,6 +8,10 @@ Below the results from runing a RC (resistor-capacitor) circuit.
 
 ![RC simulation result](https://i.ibb.co/ZxfYqf8/rc-simulation-run.png)
 
+## Installing
+
+First, make sure all python packages required (*listed on requirements.txt*) are installed. Then, make sure Tkinter is installed (`sudo apt-get install python3-tk`) if you would like to plot results.
+
 ## Running the simulation
 
 To run the model, it sufices to run the `run_sim.py` python script which is located at the project folder. In other words, from the project directory, run this command: `python run_sim.py`.
