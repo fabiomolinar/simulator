@@ -2,20 +2,6 @@ import numpy as np
 
 class SecondOrderFitter:
     """ Fits a second order model to given data
-    
-    For the open loop relationship:
-    Y(s)/U(s) = [Kw^2]/[s^2+2ews+w^2]
-    Where:
-        Y(s) = Output
-        U(s) = Input
-        K = System gain
-        e = Damping coefficient
-        w = Natural frequency
-    One can write the same thing on the time domain:
-    y``+2ewy`+w^2y = Kw^2u
-    Where:
-        y(t) = Output
-        u(t) = Input
 
     Args:
         data (ndarray): list with data on the measured time (optional), inputs and outputs
@@ -33,6 +19,34 @@ class SecondOrderFitter:
         self.raw_data = data
         self.dt = dt
         self.data = self.prepare_data(data, dt)
+    
+    def model(t, y, u, k, e, w):
+        """Model of a second order system
+        
+        For the open loop relationship: Y(s)/U(s) = [Kw^2]/[s^2+2ews+w^2]
+        One can write the same thing on the time domain:
+        y''+2ewy'+w^2y = Kw^2u
+        Defining the state variables:
+            x1 = y
+            x2 = y'
+        The following state equations can be defined:
+            x1' = x2
+            x2' = Kw^2u - (2ewx2+w^2x1)
+
+        Args:
+            t (float): time
+            y (list of floats): outputs
+            u (float): inputs
+            k (float): system gain
+            e (float): damping coefficient
+            w (float): natural frequency
+
+        Returns:
+            x (list of floats): states
+        """
+        x = np.zeros(2)
+        x[0] = 
+
 
     def prepare_data(self, data, dt):
         """Create the correct data structure that will be used by the class
@@ -71,3 +85,12 @@ class SecondOrderFitter:
         # When using dt, it can't be less than 0
         if col_number == 2 and dt <= 0.0:
             raise ValueError("Argument dt has to be greater than 0.")
+        # When time is provided, make sure it is in ascending order
+        if col_number >= 3:
+            # Check the first column (time) is in ascending order
+            lines = data.shape[0]
+            for i in range(lines):
+                if i == 0:
+                    continue
+                if data[i,0] <= data[i-1,0]:
+                    raise ValueError("The time column needs to be in ascending order")
