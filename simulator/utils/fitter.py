@@ -20,32 +20,35 @@ class SecondOrderFitter:
         self.dt = dt
         self.data = self.prepare_data(data, dt)
     
-    def model(t, y, u, k, e, w):
+    def model(t, x, u, k, e, w):
         """Model of a second order system
         
         For the open loop relationship: Y(s)/U(s) = [Kw^2]/[s^2+2ews+w^2]
         One can write the same thing on the time domain:
         y''+2ewy'+w^2y = Kw^2u
         Defining the state variables:
-            x1 = y
-            x2 = y'
-        The following state equations can be defined:
-            x1' = x2
-            x2' = Kw^2u - (2ewx2+w^2x1)
-
+            x0 = y
+            x1 = y'
+        The following state change equations can be defined:
+            x0' = x1
+            x1' = Kw^2u - (2ewx1+w^2x0)
+        
         Args:
             t (float): time
-            y (list of floats): outputs
+            x (list of floats): states
             u (float): inputs
             k (float): system gain
             e (float): damping coefficient
             w (float): natural frequency
 
         Returns:
-            x (list of floats): states
+            dx (list of floats): states derivatives
         """
-        x = np.zeros(2)
-        x[0] = 
+        x0, x1 = x
+        dx = np.zeros(2)
+        dx[0] = x1
+        dx[1] = k*w**2*u - (2*e*w*x1 + w**2*x0)
+        return dx
 
 
     def prepare_data(self, data, dt):
