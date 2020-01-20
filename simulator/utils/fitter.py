@@ -27,7 +27,7 @@ class SecondOrderFitter:
         self.data = self.prepare_data(data, dt)
         # Initial guess for k, e, w
         self.x0 = x0
-        # Parameters of the SOF
+        # Calculated parameters of the SOF
         self.k = None
         self.e = None
         self.w = None
@@ -72,10 +72,11 @@ class SecondOrderFitter:
         return dx
 
     def integrate(self, p):
+        """Function used to simulate a SOF given a list of parameters"""
         lines = self.data.shape[0]
         y = np.zeros(lines)
         y[0] = self.data[0,3]
-        # Considering y' = 0 at initial state
+        # Considering that at initial state the system is stable (y' = 0)
         x0 = [y[0], 0.0]
         for line in range(1,lines):
             x = solve_ivp(
@@ -88,6 +89,7 @@ class SecondOrderFitter:
         return y
 
     def objective(self, p):
+        """Cost function used to evaluate SOF against given data"""
         y = self.integrate(p)
         obj = 0
         for index, value in enumerate(y):
@@ -95,6 +97,7 @@ class SecondOrderFitter:
         return obj
     
     def fit(self, x0 = None):
+        """Search for the SOF parameters that better minimize the objective function"""
         if not x0:
             x0 = self.x0
         result = minimize(self.objective, x0)
