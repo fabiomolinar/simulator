@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.optimize import minimize
+from scipy.integrate import solve_ivp
 
 class SecondOrderFitter:
     """ Fits a second order model to given data
@@ -9,18 +11,32 @@ class SecondOrderFitter:
                 time (float): in seconds
                 input (float)
                 output (float)
+        x0 (list): list with guesses for:
+            k (float): system gain
+            e (float): damping coefficient
+            w (float): natural frequency
         dt (float): time difference between measured points (if time information isn't given) in seconds
     """
 
-    def __init__(self, data, dt = None):
+    def __init__(self, data, x0, dt = None):
         # Check if inputs are valid
         self.inputs_are_valid(data, dt)
-        # store inputs
+        # Store inputs
         self.raw_data = data
         self.dt = dt
         self.data = self.prepare_data(data, dt)
+        # Initial guess for k, e, w
+        self.x0 = x0
+        # Parameters of the SOF
+        self.k = None
+        self.e = None
+        self.w = None
+        # Optimization results
+        self.success = None
+        self.message = None
     
-    def model(t, x, u, k, e, w):
+    @staticmethod
+    def model(t, x, u, p):
         """Model of a second order system
         
         For the open loop relationship: Y(s)/U(s) = [Kw^2]/[s^2+2ews+w^2]
@@ -37,19 +53,56 @@ class SecondOrderFitter:
             t (float): time
             x (list of floats): states
             u (float): inputs
-            k (float): system gain
-            e (float): damping coefficient
-            w (float): natural frequency
+            p (list): list of parameters
+                k (float): system gain
+                e (float): damping coefficient
+                w (float): natural frequency
 
         Returns:
             dx (list of floats): states derivatives
         """
+        # Unpack parameters
+        u, k, e, w = p
+        # Unpack states
         x0, x1 = x
+        # Calculate derivatives
         dx = np.zeros(2)
         dx[0] = x1
         dx[1] = k*w**2*u - (2*e*w*x1 + w**2*x0)
         return dx
 
+    def integrate(self, p):
+        lines = self.data.shape[0]
+        y = np.zeros(lines)
+        y[0] = self.data[0,3]
+        # Considering y' = 0 at initial state
+        x0 = [y[0], 0.0]
+        for line in range(1,lines):
+            x = solve_ivp(
+                self.model,
+                (self.data[line-1,0], self.data[line,0]),
+                x0,
+                args = (self.data[line,1], *p)
+            )
+            y[line] = x.y[0,-1]
+        return y
+
+    def objective(self, p):
+        y = self.integrate(p)
+        obj = 0
+        for index, value in enumerate(y):
+            obj += (value-self.data[index,3])**2
+        return obj
+    
+    def fit(self, x0 = None):
+        if not x0:
+            x0 = self.x0
+        result = minimize(self.objective, x0)
+        self.k, self.e, self.w = result.x
+        self.success = result.success
+        self.message = result.message
+        # Return success
+        return result.success
 
     def prepare_data(self, data, dt):
         """Create the correct data structure that will be used by the class
