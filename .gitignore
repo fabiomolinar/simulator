@@ -1,7 +1,7 @@
 # Project
 simulator/settings/models/*.json
 simulator/settings/tuner/*.json
-temp.py
+temp.*
 
 # visual studio stuff
 .vscode/
