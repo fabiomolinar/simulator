@@ -62,7 +62,7 @@ class SecondOrderFitter:
             dx (list of floats): states derivatives
         """
         # Unpack parameters
-        u, k, e, w = p
+        k, e, w = p
         # Unpack states
         x0, x1 = x
         # Calculate derivatives
@@ -75,7 +75,7 @@ class SecondOrderFitter:
         """Function used to simulate a SOF given a list of parameters"""
         lines = self.data.shape[0]
         y = np.zeros(lines)
-        y[0] = self.data[0,3]
+        y[0] = self.data[0,2]
         # Considering that at initial state the system is stable (y' = 0)
         x0 = [y[0], 0.0]
         for line in range(1,lines):
@@ -83,8 +83,10 @@ class SecondOrderFitter:
                 self.model,
                 (self.data[line-1,0], self.data[line,0]),
                 x0,
-                args = (self.data[line,1], *p)
+                args = (self.data[line,1], p)
             )
+            # Update state
+            x0 = x.y[:,-1]
             y[line] = x.y[0,-1]
         return y
 
@@ -93,7 +95,7 @@ class SecondOrderFitter:
         y = self.integrate(p)
         obj = 0
         for index, value in enumerate(y):
-            obj += (value-self.data[index,3])**2
+            obj += (value-self.data[index,2])**2
         return obj
     
     def fit(self, x0 = None):
