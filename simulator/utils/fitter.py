@@ -63,7 +63,7 @@ class SecondOrderFitter:
         """
         # Unpack parameters
         k, e, w = p
-        # Unpack states
+        # Unpack initial conditions
         x0, x1 = x
         # Calculate derivatives
         dx = np.zeros(2)
