@@ -126,37 +126,23 @@ class Fitter(ABC):
                 if data[i,0] <= data[i-1,0]:
                     raise ValueError("The time column needs to be in ascending order")
 
-class FirstOrderFitter:
-    raise NotImplementedError
-
-class FirstOrderPlusDeadTimeFitter:
-    raise NotImplementedError
-
-class SecondOrderFitter:
-    """ Fits a second order model to given data
-
-    Args:
-        data (ndarray): list with data on the measured time (optional), inputs and outputs
-            items:
-                time (float): in seconds
-                input (float)
-                output (float)
-        x0 (list): list with guesses for:
-            k (float): system gain
-            e (float): damping coefficient
-            w (float): natural frequency
-        dt (float): time difference between measured points (if time information isn't given) in seconds
-    """
+class FirstOrderFitter(Fitter):
+    """Fits a first order model to given data"""
 
     def __init__(self, data, x0, dt = None):
-        # Check if inputs are valid
-        self.inputs_are_valid(data, dt)
-        # Store inputs
-        self.raw_data = data
-        self.dt = dt
-        self.data = self.prepare_data(data, dt)
-        # Initial guess for k, e, w
-        self.x0 = x0
+        raise NotImplementedError("Need to implement init and model methods")
+
+class FirstOrderPlusDeadTimeFitter(Fitter):
+    """Fits a first order model with dead time to given data"""
+
+    def __init__(self, data, x0, dt = None):
+        raise NotImplementedError("Need to implement init and model methods")
+
+class SecondOrderFitter(Fitter):
+    """ Fits a second order model to given data"""
+
+    def __init__(self, data, x0, dt = None):
+        super().__init__(data, x0, dt)
         # Calculated parameters of the SOF
         self.k = None
         self.e = None
@@ -200,88 +186,3 @@ class SecondOrderFitter:
         dx[0] = x1
         dx[1] = k*w**2*u - (2*e*w*x1 + w**2*x0)
         return dx
-
-    def integrate(self, p):
-        """Function used to simulate a SOF given a list of parameters"""
-        lines = self.data.shape[0]
-        y = np.zeros(lines)
-        y[0] = self.data[0,2]
-        # Considering that at initial state the system is stable (y' = 0)
-        x0 = [y[0], 0.0]
-        for line in range(1,lines):
-            x = solve_ivp(
-                self.model,
-                (self.data[line-1,0], self.data[line,0]),
-                x0,
-                args = (self.data[line,1], p)
-            )
-            # Update state
-            x0 = x.y[:,-1]
-            y[line] = x.y[0,-1]
-        return y
-
-    def objective(self, p):
-        """Cost function used to evaluate SOF against given data"""
-        y = self.integrate(p)
-        obj = 0
-        for index, value in enumerate(y):
-            obj += (value-self.data[index,2])**2
-        return obj
-    
-    def fit(self, x0 = None):
-        """Search for the SOF parameters that better minimize the objective function"""
-        if not x0:
-            x0 = self.x0
-        result = minimize(self.objective, x0)
-        self.k, self.e, self.w = result.x
-        self.success = result.success
-        self.message = result.message
-        # Return success
-        return result.success
-
-    def prepare_data(self, data, dt):
-        """Create the correct data structure that will be used by the class
-        
-        The first column represents time in seconds since the epoch and should be of type float
-        The second column represents the inputs and should be of type float
-        The third column represents the outputs and should be of type float
-        """
-        col_number = data.shape[1]
-        if col_number >= 3:
-            return data[:, 0:3]
-        if col_number == 2:
-            lines = data.shape[0]
-            time = np.linspace(0, dt*(lines-1), lines)
-            return np.column_stack((time, data))
-    
-    def inputs_are_valid(self, data, dt):
-        """Checks if the given inputs to the class are valid
-        
-        This class don't return anything. It simply raises
-        and error if there is one.
-        """
-        # Data has to be an numpy.ndarray
-        if type(data) is not np.ndarray:
-            raise TypeError("Argument data has to be of numpy.ndarray type.")
-        # Data has to be of type float
-        if data.dtype is not np.dtype("float64"):
-            raise TypeError("Argument data should be of type float.")
-        col_number = data.shape[1]
-        # There has to be at least 2 columns
-        if col_number < 2:
-            raise ValueError("Argument data has to have at least 2 columns.")
-        # If there are only 2 columns, then time information has to be given
-        if col_number == 2 and type(dt) is not float:
-            raise TypeError("Argument dt has to be a float.")
-        # When using dt, it can't be less than 0
-        if col_number == 2 and dt <= 0.0:
-            raise ValueError("Argument dt has to be greater than 0.")
-        # When time is provided, make sure it is in ascending order
-        if col_number >= 3:
-            # Check the first column (time) is in ascending order
-            lines = data.shape[0]
-            for i in range(lines):
-                if i == 0:
-                    continue
-                if data[i,0] <= data[i-1,0]:
-                    raise ValueError("The time column needs to be in ascending order")
