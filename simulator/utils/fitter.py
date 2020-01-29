@@ -71,16 +71,10 @@ class Fitter(ABC):
             obj += (value-self.data[index,2])**2
         return obj
     
+    @abstractmethod
     def fit(self, p0 = None):
         """Search for the parameters that better minimize the objective function"""
-        if not p0:
-            p0 = self.p0
-        result = minimize(self.objective, p0)
-        self.k, self.e, self.w = result.x
-        self.success = result.success
-        self.message = result.message
-        # Return success
-        return result.success
+        pass
 
     def prepare_data(self, data, dt):
         """Create the correct data structure that will be used by the class
@@ -161,19 +155,29 @@ class FirstOrderFitter(Fitter):
             u (float): inputs
             p (list): list of parameters
                 k (float): system gain
-                t (float): time constant
+                tc (float): time constant
 
         Returns:
             dx (list of floats): states derivatives
         """
         # Unpack parameters
-        k, t = p
+        k, tc = p
         # Unpack initial conditions
         x0 = x
         # Calculate derivatives
         dx = np.zeros(1)
-        dx[0] = (k*u - x0)/t
-        return dx    
+        dx = (k*u - x0)/tc
+        return dx
+
+    def fit(self, p0 = None):
+        """Search for the parameters that better minimize the objective function"""
+        if not p0:
+            p0 = self.p0
+        result = minimize(self.objective, p0)
+        self.k, self.t = result.x
+        self.success = result.success
+        self.message = result.message
+        return result.success
 
 class FirstOrderPlusDeadTimeFitter(Fitter):
     """Fits a first order model with dead time to given data"""
@@ -232,3 +236,13 @@ class SecondOrderFitter(Fitter):
         dx[0] = x1
         dx[1] = k*w**2*u - (2*e*w*x1 + w**2*x0)
         return dx
+
+    def fit(self, p0 = None):
+        """Search for the parameters that better minimize the objective function"""
+        if not p0:
+            p0 = self.p0
+        result = minimize(self.objective, p0)
+        self.k, self.e, self.w = result.x
+        self.success = result.success
+        self.message = result.message
+        return result.success
