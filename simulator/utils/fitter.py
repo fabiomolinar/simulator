@@ -130,10 +130,50 @@ class Fitter(ABC):
                     raise ValueError("The time column needs to be in ascending order")
 
 class FirstOrderFitter(Fitter):
-    """Fits a first order model to given data"""
+    """Fits a first order model to given data
+    
+    p0:
+        k (float): system gain
+        t (float): time constant
+    """
 
     def __init__(self, data, p0, dt = None):
-        raise NotImplementedError("Need to implement init and model methods")
+        super().__init__(data, p0, dt)
+        # Calculated parameters of the FOF
+        self.k = None
+        self.t = None
+
+    @staticmethod
+    def model(t, x, u, p):
+        """Model of a second order system
+        
+        For the open loop relationship: Y(s)/U(s) = K/[Ts+1]
+        One can write the same thing on the time domain:
+        Ty' + y = Ku
+        Defining the state variables:
+            x0 = y
+        The following state change equations can be defined:
+            x0' = (Ku-x0)/T
+        
+        Args:
+            t (float): time
+            x (list of floats): states
+            u (float): inputs
+            p (list): list of parameters
+                k (float): system gain
+                t (float): time constant
+
+        Returns:
+            dx (list of floats): states derivatives
+        """
+        # Unpack parameters
+        k, t = p
+        # Unpack initial conditions
+        x0 = x
+        # Calculate derivatives
+        dx = np.zeros(1)
+        dx[0] = (k*u - x0)/t
+        return dx    
 
 class FirstOrderPlusDeadTimeFitter(Fitter):
     """Fits a first order model with dead time to given data"""
