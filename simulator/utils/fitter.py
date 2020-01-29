@@ -12,11 +12,11 @@ class Fitter(ABC):
                 time (float): in seconds
                 input (float)
                 output (float)
-        x0 (list): list with initial guesses for parameters
+        p0 (list): list with initial guesses for parameters
         dt (float): time difference between measured points (if time information isn't given) in seconds
     """
 
-    def __init__(self, data, x0, dt = None):
+    def __init__(self, data, p0, dt = None):
         # Check if inputs are valid
         self.inputs_are_valid(data, dt)
         # Store inputs
@@ -24,7 +24,10 @@ class Fitter(ABC):
         self.dt = dt
         self.data = self.prepare_data(data, dt)
         # Store initial guesses
-        self.x0 = x0
+        self.p0 = p0
+        # Optimization results
+        self.success = None
+        self.message = None
     
     @abstractstaticmethod
     def model(t, x, u, p):
@@ -68,11 +71,11 @@ class Fitter(ABC):
             obj += (value-self.data[index,2])**2
         return obj
     
-    def fit(self, x0 = None):
+    def fit(self, p0 = None):
         """Search for the parameters that better minimize the objective function"""
-        if not x0:
-            x0 = self.x0
-        result = minimize(self.objective, x0)
+        if not p0:
+            p0 = self.p0
+        result = minimize(self.objective, p0)
         self.k, self.e, self.w = result.x
         self.success = result.success
         self.message = result.message
@@ -129,27 +132,30 @@ class Fitter(ABC):
 class FirstOrderFitter(Fitter):
     """Fits a first order model to given data"""
 
-    def __init__(self, data, x0, dt = None):
+    def __init__(self, data, p0, dt = None):
         raise NotImplementedError("Need to implement init and model methods")
 
 class FirstOrderPlusDeadTimeFitter(Fitter):
     """Fits a first order model with dead time to given data"""
 
-    def __init__(self, data, x0, dt = None):
+    def __init__(self, data, p0, dt = None):
         raise NotImplementedError("Need to implement init and model methods")
 
 class SecondOrderFitter(Fitter):
-    """ Fits a second order model to given data"""
+    """ Fits a second order model to given data
+    
+    p0:
+        k (float): system gain
+        e (float): damping coefficient
+        w (float): natural frequency
+    """
 
-    def __init__(self, data, x0, dt = None):
-        super().__init__(data, x0, dt)
+    def __init__(self, data, p0, dt = None):
+        super().__init__(data, p0, dt)
         # Calculated parameters of the SOF
         self.k = None
         self.e = None
         self.w = None
-        # Optimization results
-        self.success = None
-        self.message = None
     
     @staticmethod
     def model(t, x, u, p):
