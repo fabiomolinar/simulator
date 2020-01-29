@@ -145,7 +145,7 @@ class FirstOrderFitter(Fitter):
 
     @staticmethod
     def model(t, x, u, p):
-        """Model of a second order system
+        """Model of a first order system
         
         For the open loop relationship: Y(s)/U(s) = K/[Ts+1]
         One can write the same thing on the time domain:
