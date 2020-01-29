@@ -2,6 +2,7 @@
 simulator/settings/models/*.json
 simulator/settings/tuner/*.json
 temp.*
+temp/*
 
 # visual studio stuff
 .vscode/
