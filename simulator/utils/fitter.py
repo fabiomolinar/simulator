@@ -180,11 +180,67 @@ class FirstOrderFitter(Fitter):
         return result.success
 
 class FirstOrderPlusDeadTimeFitter(Fitter):
-    """Fits a first order model with dead time to given data"""
+    """Fits a first order model with dead time to given data
+    
+    p0:
+        k (float): system gain
+        t (float): time constant
+        the (float): dead time
+    """
 
     def __init__(self, data, p0, dt = None):
-        raise NotImplementedError("Need to implement init and model methods")
+        super().__init__(data, p0, dt)
+        # Calculated parameters of the FOF
+        self.k = None
+        self.t = None
+        self.the = None
 
+    @staticmethod
+    def model(t, x, tu, p):
+        """Model of a first order system
+        
+        For the open loop relationship: Y(s)/U(s-the) = K/[Ts+1]
+        One can write the same thing on the time domain:
+        Ty' + y = Ku(t-the)
+        Defining the state variables:
+            x0 = y
+        The following state change equations can be defined:
+            x0' = (Ku(t-the)-x0)/T
+        
+        Args:
+            tu (list): time and input relationship
+                t (float): time
+                u (float): input
+            x (list of floats): states
+            u (float): inputs
+            p (list): list of parameters
+                k (float): system gain
+                tc (float): time constant
+                the (float): dead time
+
+        Returns:
+            dx (list of floats): states derivatives
+        """
+        # Unpack parameters
+        k, tc, the = p
+        # Unpack initial conditions
+        x0 = x
+        # Delay input
+
+        # Calculate derivatives
+        dx = np.zeros(1)
+        dx = (k*u - x0)/tc
+        return dx
+
+    def fit(self, p0 = None):
+        """Search for the parameters that better minimize the objective function"""
+        if not p0:
+            p0 = self.p0
+        result = minimize(self.objective, p0)
+        self.k, self.t = result.x
+        self.success = result.success
+        self.message = result.message
+        return result.success
 class SecondOrderFitter(Fitter):
     """ Fits a second order model to given data
     

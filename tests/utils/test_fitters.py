@@ -1,6 +1,7 @@
 import unittest
 import numpy as np
 from simulator.utils.fitter import SecondOrderFitter as SOF
+from simulator.utils.fitter import FirstOrderFitter as FOF
 
 class TestSecondOrderFitter(unittest.TestCase):
     def test_fitter(self):
@@ -77,3 +78,33 @@ class TestSecondOrderFitter(unittest.TestCase):
         wrong_data = np.array([[0.0, 0.0, 0.0],[1.0, 1.0, 0.5],[0.5, 1.0, 1.0]])
         with self.assertRaises(ValueError):
             SOF(wrong_data, [0,0,0], 1)
+
+class TestFirstOrderFitter(unittest.TestCase):
+    def test_fitter(self):
+        # Expected results
+        k, t = 10.0, 1.5
+        # Create test data using class' integrator
+        raw_data = np.ones([50,2])
+        raw_data[0] = [0,0]
+        fof = FOF(raw_data, [k, t], 0.2)
+        y = fof.integrate([k, t])
+        raw_data = fof.data
+        raw_data[:,2] = y.T
+        # Do test
+        initial_guess = [k+1, t+2]
+        fof_to_test = FOF(raw_data, initial_guess)
+        fof_to_test.fit()
+        results = [fof_to_test.k, fof_to_test.t]
+        np.testing.assert_array_almost_equal([k, t], results, 3, "FOF fitter didn't find the correct result")
+
+    def test_integration(self):
+        # Create array with a step input
+        raw_data = np.ones([10,2])
+        raw_data[0] = [0,0]
+        fof = FOF(raw_data, [2.0, 3.0], 1.0)
+        y = fof.integrate([2.0, 3.0])
+        result = np.array(
+            [0., 0.56693694, 0.97316512, 1.26424045, 1.47280512, 
+            1.62224827, 1.72932901, 1.80605572, 1.86103283, 1.90042566]
+        )
+        np.testing.assert_array_almost_equal(y, result, 6, "ODE integration not working properly")
