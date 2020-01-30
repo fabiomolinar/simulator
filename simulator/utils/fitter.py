@@ -2,6 +2,7 @@ from abc import ABC, abstractstaticmethod, abstractmethod
 import numpy as np
 from scipy.optimize import minimize
 from scipy.integrate import solve_ivp
+from scipy.interpolate import interp1d
 
 class Fitter(ABC):
     """ Fits a model to given data
@@ -225,19 +226,44 @@ class FirstOrderPlusDeadTimeFitter(Fitter):
         k, tc, the = p
         # Unpack initial conditions
         x0 = x
-        # Delay input
-
+        # Delay input calculated through interpolation
+        delayed_time = t - the if t - the >= tu[0,0] else tu[0,0]
+        func_u = interp1d(tu[:,0],tu[:,1])
+        u = func_u(delayed_time)
         # Calculate derivatives
         dx = np.zeros(1)
         dx = (k*u - x0)/tc
         return dx
+
+    def integrate(self, p):
+        """Function used to simulate a system given a list of parameters
+        
+        This function passes the whole list with time/input data points
+        so the model can interpolate it to get the delayed input.
+        """
+        lines = self.data.shape[0]
+        y = np.zeros(lines)
+        y[0] = self.data[0,2]
+        # Considering that at initial state the system is stable (y' = 0)
+        x0 = [y[0], 0.0]
+        for line in range(1,lines):
+            x = solve_ivp(
+                self.model,
+                (self.data[line-1,0], self.data[line,0]),
+                x0,
+                args = (self.data[:,0:2], p)
+            )
+            # Update state
+            x0 = x.y[:,-1]
+            y[line] = x.y[0,-1]
+        return y
 
     def fit(self, p0 = None):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
         result = minimize(self.objective, p0)
-        self.k, self.t = result.x
+        self.k, self.t, self.the = result.x
         self.success = result.success
         self.message = result.message
         return result.success
