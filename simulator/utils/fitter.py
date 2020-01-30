@@ -124,12 +124,48 @@ class Fitter(ABC):
                 if data[i,0] <= data[i-1,0]:
                     raise ValueError("The time column needs to be in ascending order")
 
+class FitterWithInputDelay(Fitter):
+    def integrate(self, p):
+        """Function used to simulate a system given a list of parameters
+        
+        Additionally, this function also creates a new input u to the 
+        model which is a delayed input calculated using interpolation.
+
+        This function consider that the time delay parameter is the 
+        last parameter given by the `p` argument. In other words:
+            time delay setting = p[-1]
+        """
+        lines = self.data.shape[0]
+        y = np.zeros(lines)
+        y[0] = self.data[0,2]
+        # Considering that at initial state the system is stable (y' = 0)
+        x0 = [y[0], 0.0]
+        for line in range(1,lines):
+            # Delay input calculated through interpolation
+            t = self.data[line-1,0]
+            the = p[-1]
+            delayed_time = t - the if t - the >= self.data[0,0] else self.data[0,0]
+            func_u = interp1d(self.data[:,0],self.data[:,1])
+            u = func_u(delayed_time)
+            # integrate
+            x = solve_ivp(
+                self.model,
+                (t, self.data[line,0]),
+                x0,
+                args = (u, p)
+            )
+            # Update state
+            x0 = x.y[:,-1]
+            y[line] = x.y[0,-1]
+        return y
+
 class FirstOrderFitter(Fitter):
     """Fits a first order model to given data
     
-    p0:
-        k (float): system gain
-        t (float): time constant
+    Args:
+        p0:
+            k (float): system gain
+            t (float): time constant
     """
 
     def __init__(self, data, p0, dt = None):
@@ -180,13 +216,14 @@ class FirstOrderFitter(Fitter):
         self.message = result.message
         return result.success
 
-class FirstOrderPlusDeadTimeFitter(Fitter):
+class FirstOrderPlusDeadTimeFitter(FirstOrderFitter, FitterWithInputDelay):
     """Fits a first order model with dead time to given data
     
-    p0:
-        k (float): system gain
-        t (float): time constant
-        the (float): dead time
+    Args:
+        p0:
+            k (float): system gain
+            t (float): time constant
+            the (float): dead time
     """
 
     def __init__(self, data, p0, dt = None):
@@ -195,68 +232,6 @@ class FirstOrderPlusDeadTimeFitter(Fitter):
         self.k = None
         self.t = None
         self.the = None
-
-    @staticmethod
-    def model(t, x, tu, p):
-        """Model of a first order system
-        
-        For the open loop relationship: Y(s)/U(s-the) = K/[Ts+1]
-        One can write the same thing on the time domain:
-        Ty' + y = Ku(t-the)
-        Defining the state variables:
-            x0 = y
-        The following state change equations can be defined:
-            x0' = (Ku(t-the)-x0)/T
-        
-        Args:
-            tu (list): time and input relationship
-                t (float): time
-                u (float): input
-            x (list of floats): states
-            u (float): inputs
-            p (list): list of parameters
-                k (float): system gain
-                tc (float): time constant
-                the (float): dead time
-
-        Returns:
-            dx (list of floats): states derivatives
-        """
-        # Unpack parameters
-        k, tc, the = p
-        # Unpack initial conditions
-        x0 = x
-        # Delay input calculated through interpolation
-        delayed_time = t - the if t - the >= tu[0,0] else tu[0,0]
-        func_u = interp1d(tu[:,0],tu[:,1])
-        u = func_u(delayed_time)
-        # Calculate derivatives
-        dx = np.zeros(1)
-        dx = (k*u - x0)/tc
-        return dx
-
-    def integrate(self, p):
-        """Function used to simulate a system given a list of parameters
-        
-        This function passes the whole list with time/input data points
-        so the model can interpolate it to get the delayed input.
-        """
-        lines = self.data.shape[0]
-        y = np.zeros(lines)
-        y[0] = self.data[0,2]
-        # Considering that at initial state the system is stable (y' = 0)
-        x0 = [y[0], 0.0]
-        for line in range(1,lines):
-            x = solve_ivp(
-                self.model,
-                (self.data[line-1,0], self.data[line,0]),
-                x0,
-                args = (self.data[:,0:2], p)
-            )
-            # Update state
-            x0 = x.y[:,-1]
-            y[line] = x.y[0,-1]
-        return y
 
     def fit(self, p0 = None):
         """Search for the parameters that better minimize the objective function"""
@@ -267,6 +242,7 @@ class FirstOrderPlusDeadTimeFitter(Fitter):
         self.success = result.success
         self.message = result.message
         return result.success
+        
 class SecondOrderFitter(Fitter):
     """ Fits a second order model to given data
     
