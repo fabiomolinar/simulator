@@ -125,6 +125,12 @@ class Fitter(ABC):
                     raise ValueError("The time column needs to be in ascending order")
 
 class FitterWithInputDelay(Fitter):
+    """Class used for models whose model take an input with time delay
+    
+    The time delay is created at the `integrate` method by interpolating
+    the list of time and inputs with a newly calculated delayed time.
+    """
+
     def integrate(self, p):
         """Function used to simulate a system given a list of parameters
         
@@ -152,7 +158,7 @@ class FitterWithInputDelay(Fitter):
                 self.model,
                 (t, self.data[line,0]),
                 x0,
-                args = (u, p)
+                args = (u, p[0:-1])
             )
             # Update state
             x0 = x.y[:,-1]
@@ -246,10 +252,11 @@ class FirstOrderPlusDeadTimeFitter(FirstOrderFitter, FitterWithInputDelay):
 class SecondOrderFitter(Fitter):
     """ Fits a second order model to given data
     
-    p0:
-        k (float): system gain
-        e (float): damping coefficient
-        w (float): natural frequency
+    Args:
+        p0:
+            k (float): system gain
+            e (float): damping coefficient
+            w (float): natural frequency
     """
 
     def __init__(self, data, p0, dt = None):
@@ -301,6 +308,35 @@ class SecondOrderFitter(Fitter):
             p0 = self.p0
         result = minimize(self.objective, p0)
         self.k, self.e, self.w = result.x
+        self.success = result.success
+        self.message = result.message
+        return result.success
+
+class SecondOrderPlusDeadTimeFitter(SecondOrderFitter, FitterWithInputDelay):
+    """ Fits a second order model to given data
+    
+    Args:
+        p0:
+            k (float): system gain
+            e (float): damping coefficient
+            w (float): natural frequency
+            the (float): dead time
+    """
+
+    def __init__(self, data, p0, dt = None):
+        super().__init__(data, p0, dt)
+        # Calculated parameters of the FOF
+        self.k = None
+        self.e = None
+        self.w = None
+        self.the = None
+
+    def fit(self, p0 = None):
+        """Search for the parameters that better minimize the objective function"""
+        if not p0:
+            p0 = self.p0
+        result = minimize(self.objective, p0)
+        self.k, self.e, self.w, self.the = result.x
         self.success = result.success
         self.message = result.message
         return result.success
