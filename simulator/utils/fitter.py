@@ -222,7 +222,7 @@ class FirstOrderFitter(Fitter):
         self.message = result.message
         return result.success
 
-class FirstOrderPlusDeadTimeFitter(FirstOrderFitter, FitterWithInputDelay):
+class FirstOrderPlusDeadTimeFitter(FitterWithInputDelay, FirstOrderFitter):
     """Fits a first order model with dead time to given data
     
     Args:
@@ -312,7 +312,7 @@ class SecondOrderFitter(Fitter):
         self.message = result.message
         return result.success
 
-class SecondOrderPlusDeadTimeFitter(SecondOrderFitter, FitterWithInputDelay):
+class SecondOrderPlusDeadTimeFitter(FitterWithInputDelay, SecondOrderFitter):
     """ Fits a second order model to given data
     
     Args:
