@@ -219,7 +219,10 @@ class FirstOrderFitter(Fitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
-        result = minimize(self.objective, p0)
+        result = minimize(self.objective, p0, bounds=[
+            (None, None),
+            (0, None)
+        ])
         self.k, self.t = result.x
         self.success = result.success
         self.message = result.message
@@ -246,7 +249,11 @@ class FirstOrderPlusDeadTimeFitter(FitterWithInputDelay, FirstOrderFitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
-        result = minimize(self.objective, p0)
+        result = minimize(self.objective, p0, bounds=[
+            (None, None),
+            (0, None),
+            (0, None)
+        ])
         self.k, self.t, self.the = result.x
         self.success = result.success
         self.message = result.message
@@ -309,7 +316,11 @@ class SecondOrderFitter(Fitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
-        result = minimize(self.objective, p0)
+        result = minimize(self.objective, p0, bounds=[
+            (None, None),
+            (0, None),
+            (0, None)
+        ])
         self.k, self.e, self.w = result.x
         self.success = result.success
         self.message = result.message
@@ -338,7 +349,12 @@ class SecondOrderPlusDeadTimeFitter(FitterWithInputDelay, SecondOrderFitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
-        result = minimize(self.objective, p0)
+        result = minimize(self.objective, p0, bounds=[
+            (None, None),
+            (0, None),
+            (0, None),
+            (0, None)
+        ])
         self.k, self.e, self.w, self.the = result.x
         self.success = result.success
         self.message = result.message
