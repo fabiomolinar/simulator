@@ -150,8 +150,11 @@ class FitterWithInputDelay(Fitter):
             # Delay input calculated through interpolation
             t = self.data[line-1,0]
             the = p[-1]
-            delayed_time = t - the if t - the >= self.data[0,0] else self.data[0,0]
-            func_u = interp1d(self.data[:,0],self.data[:,1])
+            delayed_time = t - the
+            func_u = interp1d(
+                self.data[:,0],self.data[:,1],
+                bounds_error=False, fill_value=(self.data[0,1], self.data[lines-1,1])
+            )
             u = func_u(delayed_time)
             # integrate
             x = solve_ivp(
