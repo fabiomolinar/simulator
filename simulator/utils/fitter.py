@@ -20,6 +20,7 @@ class Fitter(ABC):
     def __init__(self, data, p0, dt = None):
         # Check if inputs are valid
         self.inputs_are_valid(data, dt)
+        self.parameters_are_valid(p0)
         # Store inputs
         self.raw_data = data
         self.dt = dt
@@ -123,6 +124,10 @@ class Fitter(ABC):
                     continue
                 if data[i,0] <= data[i-1,0]:
                     raise ValueError("The time column needs to be in ascending order")
+
+    @staticmethod
+    def parameters_are_valid(p0):
+        pass
 
 class FitterWithInputDelay(Fitter):
     """Class used for models whose model take an input with time delay
@@ -316,6 +321,8 @@ class SecondOrderFitter(Fitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
+        else:
+            self.parameters_are_valid(p0)
         result = minimize(self.objective, p0, bounds=[
             (None, None),
             (0, None),
@@ -325,6 +332,14 @@ class SecondOrderFitter(Fitter):
         self.success = result.success
         self.message = result.message
         return result.success
+
+    @staticmethod
+    def parameters_are_valid(p0):
+        k, e, w = p0
+        if e < 0:
+            raise ValueError("Damping coefficient can't be negative.")
+        if w < 0:
+            raise ValueError("Natural frequency can't be negative.")
 
 class SecondOrderPlusDeadTimeFitter(FitterWithInputDelay, SecondOrderFitter):
     """ Fits a second order model to given data
