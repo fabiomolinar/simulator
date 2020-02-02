@@ -224,6 +224,8 @@ class FirstOrderFitter(Fitter):
         """Search for the parameters that better minimize the objective function"""
         if not p0:
             p0 = self.p0
+        else:
+            self.parameters_are_valid(p0)
         result = minimize(self.objective, p0, bounds=[
             (None, None),
             (0, None)
@@ -232,6 +234,12 @@ class FirstOrderFitter(Fitter):
         self.success = result.success
         self.message = result.message
         return result.success
+
+    @staticmethod
+    def parameters_are_valid(p0):
+        k, t = p0
+        if t < 0:
+            raise ValueError("Time constant can't be negative.")
 
 class FirstOrderPlusDeadTimeFitter(FitterWithInputDelay, FirstOrderFitter):
     """Fits a first order model with dead time to given data
