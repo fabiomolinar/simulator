@@ -79,6 +79,20 @@ class TestSecondOrderFitter(unittest.TestCase):
         with self.assertRaises(ValueError):
             SOF(wrong_data, [0,0,0], 1)
 
+    def test_wrong_parameters(self):
+        raw_data = np.ones([50,2])
+        raw_data[0] = [0,0]
+        with self.subTest("Testing for negative damping coefficient"):
+            with self.assertRaises(ValueError):
+                SOF(raw_data, [1.0,-1.0,1.0], 1.0)
+        with self.subTest("Testing for negative natural frequency"):
+            with self.assertRaises(ValueError):
+                SOF(raw_data, [1.0,1.0,-1.0], 1.0)
+        with self.subTest("Testing fit method with negative parameters"):
+            with self.assertRaises(ValueError):
+                sof = SOF(raw_data, [1.0,1.0,1.0], 1.0)
+                sof.fit([2.0, -1.0, 1.0])
+        
 class TestFirstOrderFitter(unittest.TestCase):
     def test_fitter(self):
         # Expected results
@@ -108,3 +122,14 @@ class TestFirstOrderFitter(unittest.TestCase):
             1.62224827, 1.72932901, 1.80605572, 1.86103283, 1.90042566]
         )
         np.testing.assert_array_almost_equal(y, result, 6, "ODE integration not working properly")
+
+    def test_wrong_parameters(self):
+        raw_data = np.ones([50,2])
+        raw_data[0] = [0,0]
+        with self.subTest("Testing for negative damping coefficient"):
+            with self.assertRaises(ValueError):
+                SOF(raw_data, [1.0,-1.0], 1.0)
+        with self.subTest("Testing fit method with negative parameters"):
+            with self.assertRaises(ValueError):
+                sof = SOF(raw_data, [1.0,1.0], 1.0)
+                sof.fit([2.0, -1.0])
